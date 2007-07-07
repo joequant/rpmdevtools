@@ -3,7 +3,7 @@
 %define spectool_version   1.0.9
 
 Name:           rpmdevtools
-Version:        5.3
+Version:        5.4
 Release:        1%{?dist}
 Summary:        RPM Development Tools
 
@@ -135,7 +135,7 @@ fi
 
 
 %changelog
-* Sat Jul  7 2007 Ville Skyttä <ville.skytta at iki.fi>
+* Sat Jul  7 2007 Ville Skyttä <ville.skytta at iki.fi> - 5.4-1
 - Fix Epoch handling in the 2-arg form of rpmdev-vercmp with yum < 3.1.2.
 - The long form of the list option in rmdevelrpms is --list-only, not --list.
 

@@ -1,4 +1,4 @@
-AC_INIT(rpmdevtools, 5.3)
+AC_INIT(rpmdevtools, 5.4)
 AM_INIT_AUTOMAKE
 AC_PATH_PROG([HELP2MAN], [help2man], [/bin/false])
 AC_PATH_PROG([WGET], [wget], [/bin/false])
