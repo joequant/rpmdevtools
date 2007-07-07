@@ -135,6 +135,9 @@ fi
 
 
 %changelog
+* Sat Jul  7 2007 Ville Skyttä <ville.skytta at iki.fi>
+- Fix Epoch handling in the 2-arg form of rpmdev-vercmp with yum < 3.1.2.
+
 * Thu Jul  5 2007 Ville Skyttä <ville.skytta at iki.fi>
 - Add cmake and scons to default devel package list in rpmdev-rmdevelrpms.
 - Add LSB comment block to init script template.
