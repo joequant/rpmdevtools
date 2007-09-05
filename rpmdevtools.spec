@@ -8,7 +8,8 @@ Release:        1%{?dist}
 Summary:        RPM Development Tools
 
 Group:          Development/Tools
-License:        GPL
+# rpmdev-setuptree is GPLv2, everything else GPLv2+
+License:        GPLv2+ and GPLv2
 URL:            http://fedoraproject.org/
 Source0:        %{name}-%{version}.tar.bz2
 Source1:        http://people.redhat.com/nphilipp/spectool/spectool-%{spectool_version}.tar.bz2
@@ -135,6 +136,13 @@ fi
 
 
 %changelog
+* Thu Sep  6 2007 Ville Skyttä <ville.skytta at iki.fi>
+- Init script template cleanups.
+- Update rpminfo to version 2004-07-07-02.
+- Sync COPYING with http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+- Work around #250990 in rpmls and rpmdev-extract.
+- Clarify copyright info of rpmdev-* and rpmls.
+
 * Sat Jul  7 2007 Ville Skyttä <ville.skytta at iki.fi> - 5.4-1
 - Fix Epoch handling in the 2-arg form of rpmdev-vercmp with yum < 3.1.2.
 - The long form of the list option in rmdevelrpms is --list-only, not --list.
