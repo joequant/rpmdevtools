@@ -129,6 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Sep 25 2008 Ville Skyttä <ville.skytta at iki.fi>
+- Bring rpmdev-bumpspec copyright holder closer to truth (Michael Schwendt).
+
 * Sun Sep  7 2008 Ville Skyttä <ville.skytta at iki.fi>
 - Improve arch specific %%files in perl spec template (#461177, Chris Weyl).
 
