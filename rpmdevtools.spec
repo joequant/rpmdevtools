@@ -129,6 +129,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Nov 26 2008 Ville Skyttä <ville.skytta at iki.fi>
+- Add vamp-plugin-sdk to nondevpkgs in default rmdevelrpms.conf
+  (#472641, Michael Schwendt).
+
 * Mon Oct 13 2008 Ville Skyttä <ville.skytta at iki.fi>
 - Show available types in rpmdev-newspec --help (ticket #6, Todd Zullinger).
 
