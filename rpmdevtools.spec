@@ -22,6 +22,7 @@ BuildRequires:  %{_bindir}/pod2man
 BuildRequires:  python
 BuildRequires:  rpm-python
 Provides:       spectool = %{spectool_version}
+Provides:       fedora-rpmdevtools = %{version}
 Obsoletes:      fedora-rpmdevtools < 5.0
 # Minimal RPM build requirements
 Requires:       bash
@@ -97,10 +98,31 @@ for dir in %{emacs_sitestart_d} %{xemacs_sitestart_d} ; do
   touch $RPM_BUILD_ROOT$dir/rpmdev-init.elc
 done
 
+# Backwards compatibility symlinks
+ln -s rpmdev-checksig    $RPM_BUILD_ROOT%{_bindir}/fedora-rpmchecksig
+ln -s rpmdev-diff        $RPM_BUILD_ROOT%{_bindir}/fedora-diffarchive
+ln -s rpmdev-extract     $RPM_BUILD_ROOT%{_bindir}/fedora-extract
+ln -s rpmdev-md5         $RPM_BUILD_ROOT%{_bindir}/fedora-md5
+ln -s rpmdev-newspec     $RPM_BUILD_ROOT%{_bindir}/fedora-newrpmspec
+ln -s rpmdev-rmdevelrpms $RPM_BUILD_ROOT%{_bindir}/fedora-rmdevelrpms
+ln -s rpmdev-setuptree   $RPM_BUILD_ROOT%{_bindir}/fedora-buildrpmtree
+ln -s rpmdev-vercmp      $RPM_BUILD_ROOT%{_bindir}/fedora-rpmvercmp
+ln -s rpmdev-wipetree    $RPM_BUILD_ROOT%{_bindir}/fedora-wipebuildtree
+ln -s rpminfo            $RPM_BUILD_ROOT%{_bindir}/fedora-rpminfo
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+
+%post
+# Upgrade from fedora-rpmdevtools:
+oldconf=%{_sysconfdir}/fedora/rmdevelrpms.conf
+if [ $1 -eq 1 -a -f $oldconf ] ; then
+  echo "5615a64d80f6e6b4df77b3ab0ef1469c  $oldconf" \
+  | md5sum -c --status - >/dev/null 2>&1 || \
+  cat $oldconf > %{_sysconfdir}/rpmdevtools/rmdevelrpms.conf || :
+fi
 
 %triggerin -- emacs-common
 [ -d %{emacs_sitestart_d} ] && \
@@ -122,6 +144,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING README*
 %config(noreplace) %{_sysconfdir}/rpmdevtools/
 %{_datadir}/rpmdevtools/
+%{_bindir}/fedora-*
 %{_bindir}/rpm*
 %{_bindir}/spectool
 %ghost %{_datadir}/*emacs
@@ -254,7 +277,6 @@ rm -rf $RPM_BUILD_ROOT
 
 * Tue Mar 13 2007 Ville Skyttä <ville.skytta at iki.fi>
 - BR perl(ExtUtils::MakeMaker) by default in perl spec template.
-- Drop deprecated backwards compatibility with fedora-rpmdevtools.
 - Update URL.
 
 * Wed Nov  8 2006 Ville Skyttä <ville.skytta at iki.fi>
