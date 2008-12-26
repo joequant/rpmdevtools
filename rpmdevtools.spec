@@ -129,6 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Dec 26 2008 Ville Skyttä <ville.skytta at iki.fi>
+- Add man page for rpmdev-newspec.
+
 * Tue Dec 16 2008 Ville Skyttä <ville.skytta at iki.fi>
 - Add imake and intltool to internal list of devel packages in rmdevelrpms.
 
