@@ -148,10 +148,6 @@ if [ -z "$spectype" ] ; then
         lib*|*-lib|*-libs)
             spectype=lib
             ;;
-        *-fonts)
-            spectype=fonts
-            specfilter="; s/\\bFONTNAME\\b/${appname%%-fonts}/"
-            ;;
         *)
             spectype=$DEFTYPE
             ;;
