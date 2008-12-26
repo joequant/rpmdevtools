@@ -53,7 +53,7 @@ Requires:       fakeroot
 Requires:       file
 Requires:       perl
 Requires:       python
-Requires:       rpm-python
+Requires:       rpm-python >= 4.4.2.2
 #Requires:      sed
 Requires:       wget
 
@@ -153,6 +153,7 @@ fi
 
 %changelog
 * Fri Dec 26 2008 Ville Skyttä <ville.skytta at iki.fi>
+- Add minimum version to rpm-python dependency (for rpmdev-bumpspec).
 - Add man page for rpmdev-newspec.
 
 * Tue Dec 16 2008 Ville Skyttä <ville.skytta at iki.fi>
