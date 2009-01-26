@@ -3,7 +3,7 @@
 %define spectool_version   1.0.10
 
 Name:           rpmdevtools
-Version:        6.7
+Version:        6.8
 Release:        1%{?dist}
 Summary:        RPM Development Tools
 
@@ -152,7 +152,8 @@ fi
 
 
 %changelog
-* Fri Dec 26 2008 Ville Skyttä <ville.skytta at iki.fi>
+* Mon Jan 26 2009 Ville Skyttä <ville.skytta at iki.fi> - 6.8-1
+- 6.8.
 - Add minimum version to rpm-python dependency (for rpmdev-bumpspec).
 - Add man page for rpmdev-newspec.
 
