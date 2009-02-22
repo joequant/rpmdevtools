@@ -152,6 +152,9 @@ fi
 
 
 %changelog
+* Sun Feb 22 2009 Ville Skyttä <ville.skytta at iki.fi>
+- Handle %%global in addition to %%define in rpmdev-bumpspec.
+
 * Mon Jan 26 2009 Ville Skyttä <ville.skytta at iki.fi>
 - Add result dependent exit statuses to rpmdev-vercmp.
 
