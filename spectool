@@ -127,7 +127,7 @@ sub eval_sources_patches {
 	(undef, $stderr_filename) = File::Temp::tempfile ( 'stderr_XXXXXXXXXX', DIR => $tmpdir );
 	debug "stderr filename: $stderr_filename\n";
 
-	open PIPE, "rpmbuild --define '_sourcedir " . $tmpdir . "' --define '_builddir " . $tmpdir . "' --define '_srcrpmdir " . $tmpdir . "' --define '_rpmdir " . $tmpdir . "' --nodeps -bp $tmpspec_filename 2>$stderr_filename |" or die;
+	open PIPE, "rpmbuild --define '_topdir " . $tmpdir . "' --define '_sourcedir " . $tmpdir . "' --define '_builddir " . $tmpdir . "' --define '_srcrpmdir " . $tmpdir . "' --define '_rpmdir " . $tmpdir . "' --nodeps -bp $tmpspec_filename 2>$stderr_filename |" or die;
 
 	while (<PIPE>) {
 		chomp ();

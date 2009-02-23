@@ -7,6 +7,9 @@ rpmdevtools x.x (201x-xx-xx)
   - Sync with upstream devscripts 2.10.69.
   - Add Nils Philippsen's spectool 1.0.10.
 
+  Jeffrey C. Ollie:
+  - Define _topdir when calling rpmbuild in spectool.
+
 rpmdevtools 7.10 (2010-09-27)
 
   Ville Skyttä:
