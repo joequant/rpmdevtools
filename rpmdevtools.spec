@@ -152,6 +152,9 @@ fi
 
 
 %changelog
+* Fri Apr  3 2009 Ville Skyttä <ville.skytta at iki.fi> - 6.8-1
+- 6.8.
+
 * Sun Feb 22 2009 Ville Skyttä <ville.skytta at iki.fi>
 - Use %%global instead of %%define in spec templates.
 - Handle %%global in addition to %%define in rpmdev-bumpspec.
