@@ -38,7 +38,6 @@ Requires:       grep
 Requires:       gzip
 Requires:       info
 Requires:       make
-Requires:       patch
 Requires:       redhat-release
 Requires:       redhat-rpm-config
 Requires:       rpm-build >= 4.4.2.1
