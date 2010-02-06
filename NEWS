@@ -2,6 +2,7 @@ rpmdevtools x.x (2010-xx-xx)
 
   Chris Weyl:
   - Use DESTDIR instead of PERL_INSTALL_ROOT in Perl spec template (#562316).
+  - Use %{_fixperms} instead of direct chmod in Perl spec template (#562316).
 
 rpmdevtools 7.7 (2010-02-01)
 

@@ -36,7 +36,7 @@ find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 # Remove the next line from noarch packages (unneeded)
 find $RPM_BUILD_ROOT -type f -name '*.bs' -a -size 0 -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null ';'
-chmod -R u+w $RPM_BUILD_ROOT/*
+%{_fixperms} $RPM_BUILD_ROOT/*
 
 
 %check
