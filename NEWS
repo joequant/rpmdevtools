@@ -1,4 +1,4 @@
-rpmdevtools x.x (2010-xx-xx)
+rpmdevtools 7.8 (2010-02-16)
 
   Chris Weyl:
   - Use DESTDIR instead of PERL_INSTALL_ROOT in Perl spec template (#562316).
