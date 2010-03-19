@@ -85,13 +85,13 @@ def returnHdr(ts, package):
     """hand back the hdr - duh - if the pkg is foobar handback None"""
     try:
         fdno = os.open(package, os.O_RDONLY)
-    except OSError, e:
+    except OSError:
         hdr = None
         return hdr
     ts.setVSFlags(~(rpm.RPMVSF_NOMD5|rpm.RPMVSF_NEEDPAYLOAD))
     try:
         hdr = ts.hdrFromFdno(fdno)
-    except rpm.error, e:
+    except rpm.error:
         hdr = None
     if type(hdr) != rpm.hdr:
         hdr = None
