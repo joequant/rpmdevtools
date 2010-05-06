@@ -19,10 +19,12 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      
 BuildRequires:  R-devel
-BuildRequires:  tetex-latex
-Requires(post): R
-Requires(postun): R
-Requires:       R
+BuildRequires:  tex(latex)
+Requires(post): R-core
+Requires(postun): R-core
+%ifarch noarch
+Requires:       R-core
+%endif
 
 %description
 
@@ -50,23 +52,13 @@ rm -f $RPM_BUILD_ROOT%{rlibdir}/R.css
 rm -rf $RPM_BUILD_ROOT
 
 
-%post
-%{_R_make_search_index}
-
-%postun
-%{_R_make_search_index}
-
-
 %files
 %defattr(-,root,root,-)
 %dir %{rlibdir}/%{packname}
-%doc %{rlibdir}/%{packname}/latex
 %doc %{rlibdir}/%{packname}/doc
 %doc %{rlibdir}/%{packname}/html
-%doc %{rlibdir}/%{packname}/man
 %doc %{rlibdir}/%{packname}/DESCRIPTION
 %doc %{rlibdir}/%{packname}/NEWS
-%{rlibdir}/%{packname}/CONTENTS
 %{rlibdir}/%{packname}/INDEX
 %{rlibdir}/%{packname}/NAMESPACE
 %{rlibdir}/%{packname}/Meta
