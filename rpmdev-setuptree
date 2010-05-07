@@ -50,10 +50,15 @@ ISTOP=`grep -c ^$TOPDIR $RPMMACROS`
 #	echo "$MAKE  make" >> $RPMMACROS
 #	}
 #
-MFLAGS="%_smp_mflags"
-ISTOP=`grep -c ^$MFLAGS $RPMMACROS`
+ISTOP=`grep -c ^%_smp_mflags $RPMMACROS`
 [ $ISTOP -lt 1 ] && {
-	echo "$MFLAGS  -j3" >> $RPMMACROS
+	cat <<\EOF >> $RPMMACROS
+%_smp_mflags %([ -z "$RPM_BUILD_NCPUS" ] \\\
+        && RPM_BUILD_NCPUS="`/usr/bin/getconf _NPROCESSORS_ONLN`"; \\\
+        if [ "$RPM_BUILD_NCPUS" -gt 16 ]; then echo "-j16"; \\\
+        elif [ "$RPM_BUILD_NCPUS" -gt 3 ]; then echo "-j$RPM_BUILD_NCPUS"; \\\
+        else echo "-j3"; fi)
+EOF
 	}
 #
 ISTOP=`grep -c ^%__arch_install_post $RPMMACROS`
