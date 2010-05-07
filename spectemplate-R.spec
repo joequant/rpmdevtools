@@ -22,9 +22,8 @@ BuildRequires:  R-devel
 BuildRequires:  tex(latex)
 Requires(post): R-core
 Requires(postun): R-core
-%ifarch noarch
+# Remove this from non-noarch packages
 Requires:       R-core
-%endif
 
 %description
 
