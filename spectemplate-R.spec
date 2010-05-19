@@ -1,10 +1,8 @@
-%global packname %(echo %{name} | sed -e 's/^R-//')
+%define packname %(echo %{name} | sed -e 's/^R-//')
 %global packrel 1
-%ifarch noarch
+# Pick one of these (_datadir for noarch, _libdir for others), remove the other
 %global rlibdir %{_datadir}/R/library
-%else
 %global rlibdir %{_libdir}/R/library
-%endif
 
 Name:           
 Version:        

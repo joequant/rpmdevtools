@@ -3,7 +3,7 @@
 %global _use_internal_dependency_generator 0
 %global __find_requires /usr/lib/rpm/ocaml-find-requires.sh
 %global __find_provides /usr/lib/rpm/ocaml-find-provides.sh
-%global libname %(echo %{name} | sed -e 's/^ocaml-//')
+%define libname %(echo %{name} | sed -e 's/^ocaml-//')
 
 Name:           
 Version:        

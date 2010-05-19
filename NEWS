@@ -4,6 +4,7 @@ rpmdevtools x.x (20xx-xx-xx)
   - Sync with upstream devscripts 2.10.64.
   - Update R spec template (#589705).
   - Improve %_smp_mflags from rpmdev-setuptree (#588313).
+  - Fix R, php-pear, and ocaml spec template issues with %global (#593363).
 
 rpmdevtools 7.8 (2010-02-16)
 
