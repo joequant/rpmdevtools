@@ -1,5 +1,3 @@
-AUTOMAKE_OPTIONS = foreign 1.11 dist-xz
-
 SUBDIRS = devscripts emacs qa-robot
 
 pkgsysconfdir = $(sysconfdir)/rpmdevtools
