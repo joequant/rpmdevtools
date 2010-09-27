@@ -2,7 +2,7 @@ rpmdevtools x.x (201x-xx-xx)
 
   Ville Skyttä:
   - Avoid rpmdev-bumpspec backtrace on unreadable specfiles (#619867).
-  - Sync with upstream devscripts 2.10.66.
+  - Sync with upstream devscripts 2.10.68.
 
 rpmdevtools 7.9 (2010-05-19)
 
