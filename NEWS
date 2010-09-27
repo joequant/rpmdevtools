@@ -4,6 +4,9 @@ rpmdevtools x.x (201x-xx-xx)
   - Avoid rpmdev-bumpspec backtrace on unreadable specfiles (#619867).
   - Sync with upstream devscripts 2.10.68.
 
+  Dan Horák:
+  - Add rpmdev-sort (#595135).
+
 rpmdevtools 7.9 (2010-05-19)
 
   Ville Skyttä:
