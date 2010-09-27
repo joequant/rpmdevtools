@@ -1,4 +1,4 @@
-AC_INIT(rpmdevtools, 7.9)
+AC_INIT(rpmdevtools, 7.10)
 AM_INIT_AUTOMAKE([foreign 1.11 dist-xz])
 
 AC_PROG_SED

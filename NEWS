@@ -1,4 +1,4 @@
-rpmdevtools x.x (201x-xx-xx)
+rpmdevtools 7.10 (2010-09-27)
 
   Ville Skyttä:
   - Avoid rpmdev-bumpspec backtrace on unreadable specfiles (#619867).
