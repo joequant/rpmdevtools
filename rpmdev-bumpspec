@@ -25,15 +25,15 @@ import time
 from optparse import OptionParser
 
 
-__version__ = "1.0.8"
+__version__ = "1.0.9"
 
 class BumpSpecError(Exception):
     pass
 
 class SpecFile:
-    def __init__(self, filename, verbose=False, rightmost=False):
+    def __init__(self, filename, verbose=False, string=None):
         self.verbose = verbose
-        self.rightmost = rightmost
+        self.string = string
 
         self.filename = filename
         f = None
@@ -132,21 +132,25 @@ class SpecFile:
         return new
 
     def increaseFallback(self, release):
-        """bump at the very-right or add .1 as a last resort"""
-        relre = re.compile(r'(?P<prefix>.+\.)(?P<post>\d+$)')
+        """bump trailing .<self.string><DIGIT> or add .<self.string>1"""
+        string = self.string
+        if string is None:
+            string = ""
+        relre = re.compile(r'(?P<prefix>.+\.)' + re.escape(string) +
+                           r'(?P<post>\d+$)')
         relmatch = relre.search(release)
         if relmatch:
             prefix = relmatch.group('prefix')
             post = relmatch.group('post')
-            new = prefix+self.increaseMain(post)
+            new = prefix + string + self.increaseMain(post)
         else:
-            new = release.rstrip()+'.1'
+            new = release.rstrip() + '.' + string + '1'
         return new
 
     def increase(self, match):
         old = match.group(1)  # only the release value
         try:
-            if self.rightmost:
+            if self.string is not None:
                 new = self.increaseFallback(old)
             elif old.find('jpp')>0:
                 new = self.increaseJPP(old)
@@ -174,7 +178,7 @@ rpmdev-bumpspec bumps release tags in specfiles.'''
 
     version = '''rpmdev-bumpspec version %s
 
-Copyright (c) 2005-2009 Fedora Project
+Copyright (c) 2005-2010 Fedora Project
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -191,7 +195,11 @@ the Free Software Foundation; either version 2 of the License, or
                       help="user name+email string (default: output from "+
                       "rpmdev-packager(1))")
     parser.add_option("-r", "--rightmost", default=False, action='store_true',
-                      help="bump the rightmost integer or add a .1")
+                      help="bump trailing .<DIGIT> component if found, "
+                      "append .1 if not; no-op if -s is specified")
+    parser.add_option("-s", "--string", default=None,
+                      help="bump trailing .STRING<DIGIT> component if found, "
+                      "append .STRING1 if not; trumps -r")
     parser.add_option("-V", "--verbose", default=False, action='store_true',
                       help="more output")
     parser.add_option("-v", "--version", default=False, action='store_true',
@@ -225,9 +233,14 @@ the Free Software Foundation; either version 2 of the License, or
             wrapopts["break_on_hyphens"] = False
         opts.comment = textwrap.fill(opts.comment, 80, **wrapopts)
 
+    # Prepare release component string.
+    string = opts.string
+    if string is None and opts.rightmost:
+        string = ""
+
     for aspec in args:
         try:
-            s = SpecFile(aspec, opts.verbose, opts.rightmost)
+            s = SpecFile(aspec, opts.verbose, string)
         except:
             # Not actually a parser error, but... meh.
             parser.error(sys.exc_info()[1])
