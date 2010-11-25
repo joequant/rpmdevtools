@@ -43,19 +43,28 @@ class SpecFile:
         finally:
             f and f.close()
 
+    _bump_patterns = (
+        re.compile(r"^Release\s*:\s*(\d+.*)", re.I),
+        re.compile(r"^%(?:define|global)\s+(?i)release\s+(\d+.*)"),
+        re.compile(r"^Release\s*:\s+%release_func\s+(\d+.*)", re.I),
+        re.compile(r"^%(?:define|global)\s+(?i)baserelease\s+(\d+.*)"),
+        )
+    _skip_patterns = (
+        re.compile(r"\$Revision:"),
+        )
+
     def bumpRelease(self):
-        bump_patterns = [(re.compile(r"^Release\s*:\s*(\d+.*)", re.I), self.increase),
-                       (re.compile(r"^%(?:define|global)\s+rel\s+(\d+.*)"), self.increase),
-                       (re.compile(r"^%(?:define|global)\s+release\s+(\d+.*)", re.I), self.increase),
-                       (re.compile(r"^Release\s*:\s+%release_func\s+(\d+.*)"), self.increase),
-                       (re.compile(r"^%(?:define|global)\s+baserelease\s+(\d+.*)"), self.increase),
-                       ]
-        skip_pattern = re.compile(r"\$Revision:")
         for i in range(len(self.lines)):
-            if skip_pattern.search(self.lines[i]):
+            skipped = False
+            for pattern in SpecFile._skip_patterns:
+                if pattern.search(self.lines[i]):
+                    skipped = True
+                    break
+            if skipped:
                 continue
-            for bumpit, bumpit_func in bump_patterns:
-                (self.lines[i], n) = bumpit.subn(bumpit_func, self.lines[i], 1)
+            for pattern in SpecFile._bump_patterns:
+                (self.lines[i], n) = \
+                    pattern.subn(self.increase, self.lines[i], 1)
                 if n:  # bumped
                     return
 
@@ -76,26 +85,30 @@ class SpecFile:
                              self.filename)
             sys.exit(1)
 
+    _changelog_pattern = re.compile(r"^%changelog(\s|$)")
+
     def addChangelogEntry(self, evr, entry, email):
-        if len(evr):
-            evrstring = ' - %s' % evr
-        else:
-            evrstring = ''
-        changematch = re.compile(r"^%changelog")
-        date = time.strftime("%a %b %d %Y", time.localtime(time.time()))
-        newchangelogentry = "%%changelog\n* %s %s%s\n%s\n\n" % \
-            (date, email, evrstring, entry)
         for i in range(len(self.lines)):
-            if(changematch.match(self.lines[i])):
-                self.lines[i] = newchangelogentry
-                break
+            if SpecFile._changelog_pattern.match(self.lines[i]):
+                if len(evr):
+                    evrstring = ' - %s' % evr
+                else:
+                    evrstring = ''
+                date = time.strftime("%a %b %d %Y", time.localtime(time.time()))
+                newchangelogentry = "* %s %s%s\n%s\n\n" % \
+                    (date, email, evrstring, entry)
+                self.lines[i] += newchangelogentry
+                return
+
+    _main_pre_pattern = re.compile(r'^0\.(?P<rel>\d+)(?P<post>.*)')
+    _main_pattern = re.compile(r'^(?P<rel>\d+)(?P<post>.*)')
 
     def increaseMain(self, release):
         if release.startswith('0.'):
-            relre = re.compile(r'^0\.(?P<rel>\d+)(?P<post>.*)')
+            relre = SpecFile._main_pre_pattern
             pre = True
         else:
-            relre = re.compile(r'^(?P<rel>\d+)(?P<post>.*)')
+            relre = SpecFile._main_pattern
             pre = False
         relmatch = relre.search(release)
         if not relmatch:  # pattern match failed
@@ -114,11 +127,13 @@ class SpecFile:
             new = '0.' + new
         return new
 
+    _jpp_pattern = \
+        re.compile(r'(?P<prefix>.*)(?P<rel>\d+)(?P<jpp>jpp\.)(?P<post>.*)')
+
     def increaseJPP(self, release):
         """Fedora jpackage release versioning scheme"""
 
-        relre = re.compile(r'(?P<prefix>.*)(?P<rel>\d+)(?P<jpp>jpp\.)(?P<post>.*)')
-        relmatch = relre.search(release)
+        relmatch = SpecFile._jpp_pattern.search(release)
         if not relmatch:  # pattern match failed
             raise BumpSpecError
 
