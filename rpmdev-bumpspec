@@ -61,7 +61,7 @@ class SpecFile:
         
         # Here, no line matched at all.
         # Happens with macro-overloaded spec files e.g.
-        # Bump ^Release: ... line least-insignificant.
+        # Bump ^Release: ... line least-significant.
         for i in range(len(self.lines)):
             if self.lines[i].startswith('Release:'):
                 old = self.lines[i][len('Release:'):].rstrip()
