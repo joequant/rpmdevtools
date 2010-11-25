@@ -42,11 +42,11 @@ class SpecFile:
             self.lines = f.readlines()
         finally:
             f and f.close()
-        
+
     def bumpRelease(self):
-        bump_patterns = [(re.compile(r"^Release\s*:\s*(\d+.*)", re.I), self.increase), 
-                       (re.compile(r"^%(?:define|global)\s+rel\s+(\d+.*)"), self.increase), 
-                       (re.compile(r"^%(?:define|global)\s+release\s+(\d+.*)", re.I), self.increase), 
+        bump_patterns = [(re.compile(r"^Release\s*:\s*(\d+.*)", re.I), self.increase),
+                       (re.compile(r"^%(?:define|global)\s+rel\s+(\d+.*)"), self.increase),
+                       (re.compile(r"^%(?:define|global)\s+release\s+(\d+.*)", re.I), self.increase),
                        (re.compile(r"^Release\s*:\s+%release_func\s+(\d+.*)"), self.increase),
                        (re.compile(r"^%(?:define|global)\s+baserelease\s+(\d+.*)"), self.increase),
                        ]
@@ -58,7 +58,7 @@ class SpecFile:
                 (self.lines[i], n) = bumpit.subn(bumpit_func, self.lines[i], 1)
                 if n:  # bumped
                     return
-        
+
         # Here, no line matched at all.
         # Happens with macro-overloaded spec files e.g.
         # Bump ^Release: ... line least-significant.
@@ -121,7 +121,7 @@ class SpecFile:
         relmatch = relre.search(release)
         if not relmatch:  # pattern match failed
             raise BumpSpecError
-        
+
         prefix = relmatch.group('prefix')
         value = int(relmatch.group('rel'))
         jpp = relmatch.group('jpp')
