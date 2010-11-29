@@ -1,6 +1,7 @@
 rpmdevtools x.x (201x-xx-xx)
 
   Ville Skyttä:
+  - Don't check RPATHs for noarch by default in -setuptree macros (#657594).
   - Complete rpmdev-extract in bash with more supported tarball names.
   - Add -s option to rpmdev-bumpspec (#12), speed it up a bit.
   - Sync with upstream devscripts 2.10.69.

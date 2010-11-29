@@ -63,10 +63,11 @@ EOF
 #
 ISTOP=`grep -c ^%__arch_install_post $RPMMACROS`
 [ $ISTOP -lt 1 ] && {
-	cat <<EOF >> $RPMMACROS
+	cat <<\EOF >> $RPMMACROS
 %__arch_install_post \
-  /usr/lib/rpm/check-rpaths \
-  /usr/lib/rpm/check-buildroot
+    [ "%{buildarch}" = "noarch" ] || QA_CHECK_RPATHS=1 ; \
+    case "${QA_CHECK_RPATHS:-}" in [1yY]*) /usr/lib/rpm/check-rpaths ;; esac \
+    /usr/lib/rpm/check-buildroot
 EOF
 }
 RPMDIR=`rpm --eval "%{_rpmdir}"`
