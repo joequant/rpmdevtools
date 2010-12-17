@@ -54,6 +54,7 @@ my $specfile_fh;
 my $verbose = 0;
 my $dryrun = 0;
 my $debug = 0;
+my $force = 0;
 
 sub debug {
 	my @list = @_;
@@ -201,11 +202,18 @@ sub retrieve {
 	my ($where, $url) = @_;
 	if (retrievable ($url)) {
 		my $path = File::Spec->catfile($where, $url =~ m|([^/]+)$|);
-		if (-e $path) {
-			warn("$path already exists, skipping download\n");
-			return 0;
-		}
 		print "Getting $url to $path\n";
+		if (-e $path) {
+			if ($force) {
+				if (! unlink $path) {
+					warn("Could not unlink $path, skipping download: $!\n");
+					return 1;
+				}
+			} else {
+				warn("$path already exists, skipping download\n");
+				return 0;
+			}
+		}
 		# Note: -k/--insecure is intentionally not here; add it to
 		#       $CURLRC if you want it.
 		my @cmd = (qw (curl --fail --remote-time --location
@@ -287,6 +295,7 @@ Miscellaneous:
  -R, --sourcedir             download into rpm's %{_sourcedir}
  -n, --dryrun, --dry-run     don't download anything, just show what would be
                              done
+ -f, --force                 try to unlink and download if target files exist
  -D, --debug                 output debug info, don't clean up when done
 
 Files:
@@ -331,6 +340,7 @@ GetOptions ('h|help' => sub { $command = 'help'; },
 			'S|sources' => sub { push @what, 'sources'; },
 			'P|patches' => sub { push @what, 'patches'; },
 			'A|all' => sub { push @what, 'all'; },
+			'f|force' => sub { $force = 1; },
 			'D|debug' => sub { $debug = 1; },
 			'C|directory=s' => \$where,
 			'R|sourcedir' => sub { chomp($where = `rpm --eval '\%{_sourcedir}'`) });
