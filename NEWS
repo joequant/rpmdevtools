@@ -14,7 +14,10 @@ rpmdevtools 8.0 (201x-xx-xx)
   - Make spectool download things with non-lowercase protocol names in URLs.
   - Make spectool exit with non-zero status when downloading fails.
   - Add man page for spectool, tune exit status and stdout/stderr for usage.
-  - Use curl instead of wget for downloading in spectool.
+  - Use curl instead of wget for downloading in spectool.  Backwards
+    incompatible changes from spectool 1.0.10: uses
+    $sysconfdir/rpmdevtools/curlrc instead of $sysconfdir/fedora/wgetrc, and
+    never downloads things that exist in the target dir.
 
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.
