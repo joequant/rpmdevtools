@@ -109,6 +109,8 @@ sub eval_sources_patches {
 			}
 		}
 		next if ($line =~ m/^\s*(BuildArch(itectures)?|Exclu(d|siv)e(Arch|OS)|Icon)\s*:/i);
+		$line =~ s/^\s*Copyright\s*:/License:/i;
+		$line =~ s/^\s*Serial\s*:/Epoch:/i;
 		$preamble .= $line;
 		if ($line !~ m/^\s*(?:source|patch)\d*\s*:/) {
 			print $tmpspec_fh $line;
