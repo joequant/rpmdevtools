@@ -37,7 +37,7 @@ my $tmpspec_filename;
 
 my @rpm_sections = qw/package description prep build install clean pre preun
                       post postun triggerin triggerun triggerpostun files
-                      changelog/;
+                      changelog pretrans posttrans verifyscript triggerprein/;
 my %rpm_sections;
 foreach (@rpm_sections) {
 	$rpm_sections{$_} = 1;
