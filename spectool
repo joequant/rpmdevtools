@@ -117,7 +117,7 @@ sub eval_sources_patches {
 
 	print $tmpspec_fh "\%description\n\%prep\n";
 
-	print $tmpspec_fh "cat << EOF_$tmpspec_filename\n";
+	print $tmpspec_fh "cat << \\EOF_$tmpspec_filename\n";
 
 	print $tmpspec_fh $preamble;
 
