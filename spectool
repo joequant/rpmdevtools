@@ -100,6 +100,7 @@ sub eval_sources_patches {
 
     rpm_conditional_quirk ($tmpspec_fh);
 
+	my $saw_group = 0;
 	while (<$specfile_fh>) {
 		my $line = $_;
 		if ($line =~ m/^\s*%(\w+)/) {
@@ -115,6 +116,14 @@ sub eval_sources_patches {
 		if ($line !~ m/^\s*(?:source|patch)\d*\s*:/) {
 			print $tmpspec_fh $line;
 		}
+		if ($line =~ /^\s*Group\s*:/i) {
+			$saw_group++;
+		}
+	}
+
+	if (!$saw_group) {
+		print $tmpspec_fh "Group: spectool\n";
+		$preamble = "Group: spectool\n$preamble";
 	}
 
 	print $tmpspec_fh "\%description\n\%prep\n";

@@ -10,6 +10,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Don't shell-expand specfile preambles in spectool.
   - Recognize %{pretrans,posttrans,verifyscript,triggerprein} in spectool.
   - Make spectool work with old specfiles containing Serial and Copyright.
+  - Handle missing Group tag in spectool for rpm versions that require it.
 
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.
