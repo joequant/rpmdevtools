@@ -6,7 +6,7 @@ bashcompdir = $(sysconfdir)/bash_completion.d
 bin_SCRIPTS = rpmdev-newinit rpmdev-newspec rpmdev-rmdevelrpms
 dist_bin_SCRIPTS = rpmdev-checksig rpmdev-diff rpmdev-extract rpmdev-md5 \
 	rpmdev-setuptree rpmdev-sort rpmdev-vercmp rpmdev-wipetree rpminfo \
-	rpmls rpmdev-bumpspec rpmdev-packager
+	rpmls rpmdev-bumpspec rpmdev-packager spectool
 
 man1_MANS = rpmdev-diff.1 rpmdev-extract.1 rpmdev-bumpspec.1 rpmdev-newinit.1 \
 	rpmdev-newspec.1 rpmdev-packager.1

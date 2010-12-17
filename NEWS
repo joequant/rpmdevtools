@@ -5,6 +5,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Complete rpmdev-extract in bash with more supported tarball names.
   - Add -s option to rpmdev-bumpspec (#12), speed it up a bit.
   - Sync with upstream devscripts 2.10.69.
+  - Add Nils Philippsen's spectool 1.0.10.
 
 rpmdevtools 7.10 (2010-09-27)
 

@@ -1,0 +1,12 @@
+Spectool is a utility to expand and download sources and patches to build RPMs.
+See "spectool -h" for usage information.  GNU wget is used for downloading.
+If /etc/fedora/wgetrc exists, it will be used to configure wget; if not,
+the usual wget configuration takes place.
+
+If you experience problems with specific specfiles, try to run
+
+rpmbuild --nobuild --nodeps <specfile>
+
+on the file which might give a clue why spectool fails on a file (ignore
+anything about missing sources or patches). The plan is to catch errors like
+this in spectool itself and warn the user about it in the future.
