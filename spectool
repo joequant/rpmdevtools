@@ -206,21 +206,34 @@ sub retrieve {
 		print "--> @cmd\n" if ($verbose > 1);
 		if (! $dryrun) {
 			system @cmd;
+			return $? == -1 ? 127 : $? >> 8;
 		} else {
 			print "dry run: @cmd\n";
 		}
 	} else {
 		warn "Couldn't fetch $url: missing/unsupported URL\n" if ($verbose);
 	}
+	return 0;
 }
 
 sub retrieve_sources_patches {
 	my $where = shift;
+	my $ret = my $rc = 0;
 	foreach (@_) {
-		m/^source(\d+)$/i && retrieve ($where, $sources{$1});
-		m/^patch(\d+)$/i && retrieve ($where, $patches{$1});
-		m/^(sources|patches|all)$/i && retrieve_sources_patches ($where, expand ($1));
+		if (/^source(\d+)$/i) {
+			$rc = retrieve ($where, $sources{$1});
+			$ret ||= $rc;
+		}
+		if (/^patch(\d+)$/i) {
+			$rc = retrieve ($where, $patches{$1});
+			$ret ||= $rc;
+		}
+		if (/^(sources|patches|all)$/i) {
+			$rc = retrieve_sources_patches ($where, expand ($1));
+			$ret ||= $rc;
+		}
 	}
+	return $ret;
 }
 
 sub usage {
@@ -329,7 +342,7 @@ if (@ARGV) {
 
 foreach ($command) {
 	m/listfiles/ && do { open_specfile (); eval_sources_patches (); list_sources_patches (@what); last; };
-	m/getfiles/ && do { open_specfile (); eval_sources_patches (); retrieve_sources_patches ($where, @what); last; };
+	m/getfiles/ && do { open_specfile (); eval_sources_patches (); exit retrieve_sources_patches ($where, @what); };
 	m/version/ && do { show_version (); last; };
 	(m/none/ || m/help/) && do { usage (); last; };
 }

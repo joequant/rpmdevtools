@@ -12,6 +12,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Make spectool work with old specfiles containing Serial and Copyright.
   - Handle missing Group tag in spectool for rpm versions that require it.
   - Make spectool download things with non-lowercase protocol names in URLs.
+  - Make spectool exit with non-zero status when downloading fails.
 
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.
