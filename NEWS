@@ -10,6 +10,9 @@ rpmdevtools x.x (201x-xx-xx)
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.
 
+  Todd Zullinger:
+  - Make spectool -s x,y and -p x,y work as documented.
+
 rpmdevtools 7.10 (2010-09-27)
 
   Ville Skyttä:
