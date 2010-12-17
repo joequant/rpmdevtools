@@ -11,6 +11,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Recognize %{pretrans,posttrans,verifyscript,triggerprein} in spectool.
   - Make spectool work with old specfiles containing Serial and Copyright.
   - Handle missing Group tag in spectool for rpm versions that require it.
+  - Make spectool download things with non-lowercase protocol names in URLs.
 
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.

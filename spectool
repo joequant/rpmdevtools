@@ -194,7 +194,7 @@ sub list_sources_patches {
 
 sub retrievable {
 	my $url = $_[0];
-	return eval "\$url =~ m,^$protocols_re://,;";
+	return eval "\$url =~ m,^$protocols_re://,i;";
 }
 
 sub retrieve {
