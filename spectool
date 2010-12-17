@@ -210,7 +210,7 @@ sub retrieve {
 			print "dry run: @cmd\n";
 		}
 	} else {
-		warn "Couldn't fetch $url: missing URL\n" if ($verbose);
+		warn "Couldn't fetch $url: missing/unsupported URL\n" if ($verbose);
 	}
 }
 
