@@ -27,7 +27,7 @@ use FileHandle;
 use Getopt::Long;
 
 my $VERSION = '1.0.10rpmdev1';
-my $WGETRC = '/etc/fedora/wgetrc';
+my $CURLRC = '__SYSCONFDIR__/rpmdevtools/curlrc';
 
 Getopt::Long::Configure ('no_ignore_case');
 
@@ -200,9 +200,19 @@ sub retrievable {
 sub retrieve {
 	my ($where, $url) = @_;
 	if (retrievable ($url)) {
-		print "Getting $url to $where\n" if ($verbose);
-		my @cmd = (qw (wget -N --retr-symlinks -P), $where, $url);
-		unshift(@cmd, 'env', "WGETRC=$WGETRC") if (-e $WGETRC);
+		my $path = File::Spec->catfile($where, $url =~ m|([^/]+)$|);
+		if (-e $path) {
+			warn("$path already exists, skipping download\n");
+			return 0;
+		}
+		print "Getting $url to $path\n";
+		# Note: -k/--insecure is intentionally not here; add it to
+		#       $CURLRC if you want it.
+		my @cmd = (qw (curl --fail --remote-time --location
+			       --output), $path,
+			   '--user-agent', "spectool/$VERSION");
+		push(@cmd, '--config', $CURLRC) if (-e $CURLRC);
+		push(@cmd, $url);
 		print "--> @cmd\n" if ($verbose > 1);
 		if (! $dryrun) {
 			system @cmd;
@@ -236,6 +246,21 @@ sub retrieve_sources_patches {
 	return $ret;
 }
 
+sub help {
+	print << 'EOF';
+Spectool is a tool to expand and download sources and patches from specfiles.
+
+If you experience problems with specific specfiles, try to run
+
+  rpmbuild --nobuild --nodeps <specfile>
+
+on the file which might give a clue why spectool fails on a file (ignore
+anything about missing sources or patches). The plan is to catch errors like
+this in spectool itself and warn the user about it in the future.
+
+EOF
+}
+
 sub usage {
 	my $status = shift || 0;
 	select STDERR if $status;
@@ -263,6 +288,10 @@ Miscellaneous:
  -n, --dryrun, --dry-run     don't download anything, just show what would be
                              done
  -D, --debug                 output debug info, don't clean up when done
+
+Files:
+__SYSCONFDIR__/rpmdevtools/curlrc
+ optional curl(1) configuration
 EOF
 	exit $status;
 }
@@ -346,7 +375,7 @@ foreach ($command) {
 	m/listfiles/ && do { open_specfile (); eval_sources_patches (); list_sources_patches (@what); last; };
 	m/getfiles/ && do { open_specfile (); eval_sources_patches (); exit retrieve_sources_patches ($where, @what); };
 	m/version/ && do { show_version (); last; };
-	m/help/ && usage (0);
+	m/help/ && help () && usage (0);
 	m/none/ && usage (1);
 }
 
