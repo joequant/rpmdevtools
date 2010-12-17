@@ -6,6 +6,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Add -s option to rpmdev-bumpspec (#12), speed it up a bit.
   - Sync with upstream devscripts 2.10.69.
   - Add Nils Philippsen's spectool 1.0.10.
+  - Fix spectool with Icon and incompatible BuildArchitectures tags (#637000).
 
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.

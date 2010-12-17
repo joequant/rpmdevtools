@@ -108,7 +108,7 @@ sub eval_sources_patches {
 				last;
 			}
 		}
-		next if ($line =~ m/^\s*(BuildArch|Exclu(d|siv)e(Arch|OS))\s*:/i);
+		next if ($line =~ m/^\s*(BuildArch(itectures)?|Exclu(d|siv)e(Arch|OS)|Icon)\s*:/i);
 		$preamble .= $line;
 		if ($line !~ m/^\s*(?:source|patch)\d*\s*:/) {
 			print $tmpspec_fh $line;
