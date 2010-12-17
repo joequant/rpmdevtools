@@ -50,7 +50,7 @@ _spectool()
         COMPREPLY=( $( compgen -W '--list-files --get-files --help --all
                                    --sources --patches --source --patch
                                    --define --directory --sourcedir --dry-run
-                                   --debug' -- "$cur" ) )
+                                   --force --debug' -- "$cur" ) )
     else
         _rpmdev_specfiles
     fi
