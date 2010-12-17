@@ -7,7 +7,6 @@ config.*
 configure
 install-sh
 missing
-spectool-*
 rpmdev-bumpspec.1
 rpmdev-diff.1
 rpmdev-extract.1
@@ -19,3 +18,4 @@ rpmdev-packager.1
 rpmdev-rmdevelrpms
 rpmdev-rmdevelrpms.8
 rpmdevtools.bash-completion
+spectool.1

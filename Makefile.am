@@ -9,7 +9,7 @@ dist_bin_SCRIPTS = rpmdev-checksig rpmdev-diff rpmdev-extract rpmdev-md5 \
 	rpmls rpmdev-bumpspec rpmdev-packager spectool
 
 man1_MANS = rpmdev-diff.1 rpmdev-extract.1 rpmdev-bumpspec.1 rpmdev-newinit.1 \
-	rpmdev-newspec.1 rpmdev-packager.1
+	rpmdev-newspec.1 rpmdev-packager.1 spectool.1
 man8_MANS = rpmdev-rmdevelrpms.8
 
 dist_pkgsysconf_DATA = newspec.conf rmdevelrpms.conf \
@@ -35,6 +35,9 @@ all: $(bin_SCRIPTS) $(man1_MANS) $(man8_MANS) $(bashcomp_DATA)
 
 %: %.py
 	$(SED) -e 's|__SYSCONFDIR__|$(sysconfdir)|g' $< > $@
+
+spectool.1: spectool
+	COLUMNS=1000 $(HELP2MAN) -s 1 -N -h -h -v --version $(<D)/$(<F) -o $@
 
 %.1: %
 	chmod +x $<

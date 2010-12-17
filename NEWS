@@ -13,6 +13,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Handle missing Group tag in spectool for rpm versions that require it.
   - Make spectool download things with non-lowercase protocol names in URLs.
   - Make spectool exit with non-zero status when downloading fails.
+  - Add man page for spectool, tune exit status and stdout/stderr for usage.
 
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.

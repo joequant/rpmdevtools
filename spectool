@@ -237,30 +237,34 @@ sub retrieve_sources_patches {
 }
 
 sub usage {
-	print STDERR << 'EOF';
+	my $status = shift || 0;
+	select STDERR if $status;
+	print << 'EOF';
 Usage: spectool [<options>] <specfile>
+
 Options:
-operating mode:
--l, --lf, --list-files        lists the expanded sources/patches (default)
--g, --gf, --get-files         gets the sources/patches that are listed with
-                              a URL
--h, --help                    display this help screen
+Operating mode:
+ -l, --lf, --list-files      lists the expanded sources/patches (default)
+ -g, --gf, --get-files       gets the sources/patches that are listed with
+                             a URL
+ -h, --help                  display this help screen
 
-files on which to operate:
--A, --all                     all files, sources and patches (default)
--S, --sources                 all sources
--P, --patches                 all patches
--s, --source x[,y[,...]]      specified sources
--p, --patch a[,b[,...]]       specified patches
+Files on which to operate:
+ -A, --all                   all files, sources and patches (default)
+ -S, --sources               all sources
+ -P, --patches               all patches
+ -s, --source x[,y[,...]]    specified sources
+ -p, --patch a[,b[,...]]     specified patches
 
-misc:
--d, --define 'macro value'    defines RPM macro 'macro' to be 'value'
--C, --directory dir           download into specified directory (default '.')
--R, --sourcedir               download into rpm's %{_sourcedir}
--n, --dryrun, --dry-run       don't download anything, just show what would be
-                              done
--D, --debug                   output debug info, don't clean up when done
+Miscellaneous:
+ -d, --define 'macro value'  defines RPM macro 'macro' to be 'value'
+ -C, --directory dir         download into specified directory (default '.')
+ -R, --sourcedir             download into rpm's %{_sourcedir}
+ -n, --dryrun, --dry-run     don't download anything, just show what would be
+                             done
+ -D, --debug                 output debug info, don't clean up when done
 EOF
+	exit $status;
 }
 
 sub show_version {
@@ -327,8 +331,7 @@ unless (@ARGV) {
 		m/version/ && last;
 		m/help/ && last;
 		m/none/ && last;
-		usage ();
-		exit (1);
+		usage (1);
 	}
 }
 
@@ -336,15 +339,15 @@ $specfile = shift @ARGV;
 
 if (@ARGV) {
 	warn "You can only work on one spec file at a time.\n";
-	usage ();
-	exit (1);
+	usage (1);
 }
 
 foreach ($command) {
 	m/listfiles/ && do { open_specfile (); eval_sources_patches (); list_sources_patches (@what); last; };
 	m/getfiles/ && do { open_specfile (); eval_sources_patches (); exit retrieve_sources_patches ($where, @what); };
 	m/version/ && do { show_version (); last; };
-	(m/none/ || m/help/) && do { usage (); last; };
+	m/help/ && usage (0);
+	m/none/ && usage (1);
 }
 
 # Local variables:
