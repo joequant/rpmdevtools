@@ -24,7 +24,8 @@ DEFTYPE="minimal"
 DEFSPEC="newpackage.spec"
 CONFIG="__SYSCONFDIR__/rpmdevtools/newspec.conf"
 
-if [ -f "$CONFIG" ] ; then
+# Don't load config at rpm build time so it won't affect the man page
+if [[ -z $RPM_BUILD_ROOT && -f $CONFIG ]] ; then
     . "$CONFIG"
 fi
 
