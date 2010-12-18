@@ -84,7 +84,11 @@ $types}
   -h, --help     Show this usage message and exit.
   -v, --version  Print version information and exit.
 
-System wide configuration file is $CONFIG.
+Files:
+$SPECDIR
+  Directory for specfile templates.
+$CONFIG
+  System wide configuration.
 EOF
 }
 
