@@ -18,6 +18,7 @@ rpmdevtools 8.0 (201x-xx-xx)
     incompatible changes from spectool 1.0.10: uses
     $sysconfdir/rpmdevtools/curlrc instead of $sysconfdir/fedora/wgetrc, and
     downloads things that exist in the target dir only with --force.
+  - Make newspec filter some specfile constructs depending on rpm version.
 
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.

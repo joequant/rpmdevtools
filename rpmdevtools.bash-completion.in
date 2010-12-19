@@ -137,11 +137,15 @@ _rpmdev_newspec()
             COMPREPLY=( $( compgen -W '${COMPREPLY[@]}' -- "$cur" ) )
             return 0
             ;;
+        -r|--rpm-version)
+            COMPREPLY=( $( compgen -W '4.6' -- "$cur" ) )
+            return 0
+            ;;
     esac
 
     if [[ "$cur" == -* ]] ; then
-        COMPREPLY=( $( compgen -W '--output --type --macros --help --version' \
-            -- "$cur" ) )
+        COMPREPLY=( $( compgen -W '--output --type --macros --rpm-version
+            --help --version' -- "$cur" ) )
         return 0
     fi
 
