@@ -32,20 +32,19 @@ all: $(bin_SCRIPTS) $(man1_MANS) $(man8_MANS) $(bashcomp_DATA)
 
 %: %.in
 	$(SED) -e 's|__SYSCONFDIR__|$(sysconfdir)|g' $< > $@
+	case "$(bin_SCRIPTS)" in *$@*) chmod +x $@ ;; esac
 
 %: %.py
 	$(SED) -e 's|__SYSCONFDIR__|$(sysconfdir)|g' $< > $@
+	chmod +x $@
 
 spectool.1: spectool
-	chmod +x $<
 	COLUMNS=1000 $(HELP2MAN) -s 1 -N -h -h -v --version $(<D)/$(<F) -o $@
 
 %.1: %
-	chmod +x $<
 	COLUMNS=1000 $(HELP2MAN) -s 1 -N -h -h -v -v $(<D)/$(<F) -o $@
 
 %.8: %
-	chmod +x $<
 	COLUMNS=1000 $(HELP2MAN) -s 8 -N $(<D)/$(<F) -o $@
 
 install-exec-hook:
