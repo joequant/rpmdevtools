@@ -251,5 +251,5 @@ cat "$tempspec" | sed -e "s/^\\(Name:\\s*\\)$/\\1$appname/ $specfilter" \
   > "$specfile"
 
 if [ "$specfile" != "/dev/stdout" ] ; then
-    echo "$specfile created; type $spectype, rpm version >= $rpmmin.$rpmmaj."
+    echo "$specfile created; type $spectype, rpm version >= $rpmmaj.$rpmmin."
 fi
