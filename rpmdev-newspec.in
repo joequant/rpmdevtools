@@ -163,14 +163,18 @@ if [ -z "$spectype" ] ; then
         ocaml-*)
             spectype="${appname%%-*}"
             libname="${appname##ocaml-}"
-            specfilter="; /^%define\\s\\s*libname\\s.*/d \
-                ; s/%{libname}/$libname/g"
+            specfilter="
+    s/^%define\\s\\s*libname\\s[^\\n]*\\n//Mg
+    s/%{libname}/$libname/g
+"
             ;;
         perl-*)
             spectype="${appname%%-*}"
             cpandist="${appname##perl-}"
-            specfilter="; s/^%setup.*/%setup -q -n $cpandist-%{version}/ \
-               ; s|^\\(URL:\\s*\\).*|\1http://search.cpan.org/dist/$cpandist/|"
+            specfilter="
+    s/^%setup.*/%setup -q -n $cpandist-%{version}/Mg
+    s|^\\(URL:[ \\t]*\\)[^\\n]*|\\1http://search.cpan.org/dist/$cpandist/|IMg
+"
             ;;
         php-pear-*)
             spectype=php-pear
@@ -181,8 +185,10 @@ if [ -z "$spectype" ] ; then
         R-*)
             spectype="${appname%%-*}"
             packname="${appname##R-}"
-            specfilter="; /^%define\\s\\s*packname\\s.*/d \
-                ; s/%{packname}/$packname/g"
+            specfilter="
+    s/^%define\\s\\s*packname\\s[^\\n]*\\n//Mg
+    s/%{packname}/$packname/g
+"
             ;;
         ruby-*)
             spectype="${appname%%-*}"
@@ -193,13 +199,13 @@ if [ -z "$spectype" ] ; then
         *-fonts|*-fonts-simple)
             spectype=fonts-simple
             appname="${appname%%-simple}"
-            specfilter="; s/<FONTNAME>/${appname%%-fonts}/"
+            specfilter="s/<FONTNAME>/${appname%%-fonts}/g"
             [ -n "$specfile_set" ] || specfile="$appname.spec"
             ;;
         *-fonts-multi)
             spectype=fonts-multi
             appname="${appname%%-multi}"
-            specfilter="; s/<FONTNAME>/${appname%%-fonts}/"
+            specfilter="s/<FONTNAME>/${appname%%-fonts}/g"
             [ -n "$specfile_set" ] || specfile="$appname.spec"
             ;;
         *)
@@ -226,32 +232,43 @@ fi
 if [ -n "$NEWSPEC_PREFER_MACROS" ] ; then
     # This assumes templates are written using the shell style variables,
     # without surrounding curly braces.
-    specfilter="$specfilter \
-                ; s/\\\$RPM_SOURCE_DIR\\b/%{_sourcedir}/g \
-                ; s/\\\$RPM_BUILD_DIR\\b/%{_builddir}/g \
-                ; s/\\\$RPM_OPT_FLAGS\\b/%{optflags}/g \
-                ; s/\\\$RPM_ARCH\\b/%{_arch}/g \
-                ; s/\\\$RPM_OS\\b/%{_os}/g \
-                ; s/\\\$RPM_DOC_DIR\\b/%{_docdir}/g \
-                ; s/\\\$RPM_PACKAGE_NAME\\b/%{name}/g \
-                ; s/\\\$RPM_PACKAGE_VERSION\\b/%{version}/g \
-                ; s/\\\$RPM_PACKAGE_RELEASE\\b/%{release}/g \
-                ; s/\\\$RPM_BUILD_ROOT\\b/%{buildroot}/g"
+    specfilter="$specfilter
+    s/\\\$RPM_SOURCE_DIR\\b/%{_sourcedir}/g
+    s/\\\$RPM_BUILD_DIR\\b/%{_builddir}/g
+    s/\\\$RPM_OPT_FLAGS\\b/%{optflags}/g
+    s/\\\$RPM_ARCH\\b/%{_arch}/g
+    s/\\\$RPM_OS\\b/%{_os}/g
+    s/\\\$RPM_DOC_DIR\\b/%{_docdir}/g
+    s/\\\$RPM_PACKAGE_NAME\\b/%{name}/g
+    s/\\\$RPM_PACKAGE_VERSION\\b/%{version}/g
+    s/\\\$RPM_PACKAGE_RELEASE\\b/%{release}/g
+    s/\\\$RPM_BUILD_ROOT\\b/%{buildroot}/g
+"
 fi
 
 # If enabling more versions, remember to update --help and bash completion too.
 if [[ $rpmver -ge 40400 ]] ; then # >= 4.4
     # filter %defattr(-,root,root(,-)) immediately after %files
-    specfilter="$specfilter ; /^%files\\(\\s.*\\)\\?\$/ { n ; /^%defattr\\s*(\\s*-\\s*,\\s*root\\s*,\\s*root\\(\\s*,\\s*-\\s*\\)\\?)\\s*\$/d }"
+    specfilter="$specfilter
+    s/^\\(%files\\b[^\\n]*\\n\\{1,\\}\\)%defattr[ \\t]*([ \\t]*-[ \\t]*,[ \\t]*root[ \\t]*,[ \\t]*root\\([ \\t]*,[ \\t]*-[ \\t]*\\)\\?)[^\\n]*\\n\\{1,\\}/\\1/Mg
+"
 fi
 if [[ $rpmver -ge 40600 ]] ; then # >= 4.6
     # filter BuildRoot and Group tags
-    specfilter="$specfilter ; /^\\(BuildRoot\\|Group\\)\\s*:/Id"
+    specfilter="$specfilter
+    s/^\\(BuildRoot\\|Group\\)\\s*:[^\\n]*\\n//IMg"
 fi
 # TODO: for >= 4.8 prune dummy %clean section
 
-cat "$tempspec" | sed -e "s/^\\(Name:\\s*\\)$/\\1$appname/ $specfilter" \
-  > "$specfile"
+cat "$tempspec" | sed -ne "
+1h
+1!H
+$ {
+    g
+    s/^\\(Name:[ \\t]*\\)[^\\n]*/\\1$appname/IM
+    $specfilter
+    p
+}" > "$specfile"
 
 if [ "$specfile" != "/dev/stdout" ] ; then
     echo "$specfile created; type $spectype, rpm version >= $rpmmaj.$rpmmin."
