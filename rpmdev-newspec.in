@@ -164,7 +164,7 @@ if [ -z "$spectype" ] ; then
             spectype="${appname%%-*}"
             libname="${appname##ocaml-}"
             specfilter="
-    s/^%define\\s\\s*libname\\s[^\\n]*\\n//Mg
+    s/^%define\\s+libname\\s[^\\n]*\\n//Mg
     s/%\\{libname}/$libname/g
 "
             ;;
@@ -186,7 +186,7 @@ if [ -z "$spectype" ] ; then
             spectype="${appname%%-*}"
             packname="${appname##R-}"
             specfilter="
-    s/^%define\\s\\s*packname\\s[^\\n]*\\n//Mg
+    s/^%define\\s+packname\\s[^\\n]*\\n//Mg
     s/%\\{packname}/$packname/g
 "
             ;;
