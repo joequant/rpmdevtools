@@ -85,8 +85,8 @@ $types}
   -m, --macros   Emit templates using macros instead of shell style variables.
   -r VERSION, --rpm-version VERSION
                  Filter out some spec file constructs not needed by the
-                 specified rpm(build) version. Currently implemented: 4.4, 4.6,
-                 default: ${RPMVER:-system rpm version}.
+                 specified rpm(build) version. Currently implemented: 4.4,
+                 4.6, 4.8; default: ${RPMVER:-system rpm version}.
   -h, --help     Show this usage message and exit.
   -v, --version  Print version information and exit.
 
@@ -229,6 +229,26 @@ elif [ "$specfile" = "-" ] ; then
     specfile=/dev/stdout
 fi
 
+# If enabling more versions, remember to update --help and bash completion too.
+if [[ $rpmver -ge 40400 ]] ; then # >= 4.4
+    # filter %defattr(-,root,root(,-)) immediately after %files
+    specfilter="$specfilter
+    s/^(%files\\b[^\\n]*\\n+)%defattr[ \\t]*\\([ \\t]*-[ \\t]*,[ \\t]*root[ \\t]*,[ \\t]*root([ \\t]*,[ \\t]*-[ \\t]*)?\\)[^\\n]*\\n+/\\1/Mg
+"
+fi
+if [[ $rpmver -ge 40600 ]] ; then # >= 4.6
+    # filter BuildRoot and Group tags
+    specfilter="$specfilter
+    s/^(BuildRoot|Group)[ \\t]*:[^\\n]*\\n//IMg
+"
+fi
+if [[ $rpmver -ge 40800 ]] ; then # >= 4.8
+    # filter unnecessary basic %clean section, up to next section
+    specfilter="$specfilter
+    s|^%clean\\s*((/bin/)?rm\\|%\\{?__rm\\}?)[ \\t]+-[rRf]+[ \\t]+\\\$RPM_BUILD_ROOT\\s{2,}^%|%|Mg
+"
+fi
+
 if [ -n "$NEWSPEC_PREFER_MACROS" ] ; then
     # This assumes templates are written using the shell style variables,
     # without surrounding curly braces.
@@ -245,21 +265,6 @@ if [ -n "$NEWSPEC_PREFER_MACROS" ] ; then
     s/\\\$RPM_BUILD_ROOT\\b/%{buildroot}/g
 "
 fi
-
-# If enabling more versions, remember to update --help and bash completion too.
-if [[ $rpmver -ge 40400 ]] ; then # >= 4.4
-    # filter %defattr(-,root,root(,-)) immediately after %files
-    specfilter="$specfilter
-    s/^(%files\\b[^\\n]*\\n+)%defattr[ \\t]*\\([ \\t]*-[ \\t]*,[ \\t]*root[ \\t]*,[ \\t]*root([ \\t]*,[ \\t]*-[ \\t]*)?\\)[^\\n]*\\n+/\\1/Mg
-"
-fi
-if [[ $rpmver -ge 40600 ]] ; then # >= 4.6
-    # filter BuildRoot and Group tags
-    specfilter="$specfilter
-    s/^(BuildRoot|Group)[ \\t]*:[^\\n]*\\n//IMg
-"
-fi
-# TODO: for >= 4.8 prune dummy %clean section
 
 cat "$tempspec" | sed -rne "
 1h
