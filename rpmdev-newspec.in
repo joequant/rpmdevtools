@@ -85,8 +85,8 @@ $types}
   -m, --macros   Emit templates using macros instead of shell style variables.
   -r VERSION, --rpm-version VERSION
                  Filter out some spec file constructs not needed by the
-                 specified rpm(build) version. Currently implemented: 4.4,
-                 4.6, 4.8; default: ${RPMVER:-system rpm version}.
+                 specified rpm(build) version and newer ones. Currently
+                 implemented: 4.4, 4.6, 4.8; default: ${RPMVER:-system rpm version}.
   -h, --help     Show this usage message and exit.
   -v, --version  Print version information and exit.
 
