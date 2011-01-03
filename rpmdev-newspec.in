@@ -165,7 +165,7 @@ if [ -z "$spectype" ] ; then
             libname="${appname##ocaml-}"
             specfilter="
     s/^%define\\s\\s*libname\\s[^\\n]*\\n//Mg
-    s/%{libname}/$libname/g
+    s/%\\{libname}/$libname/g
 "
             ;;
         perl-*)
@@ -173,7 +173,7 @@ if [ -z "$spectype" ] ; then
             cpandist="${appname##perl-}"
             specfilter="
     s/^%setup.*/%setup -q -n $cpandist-%{version}/Mg
-    s|^\\(URL:[ \\t]*\\)[^\\n]*|\\1http://search.cpan.org/dist/$cpandist/|IMg
+    s|^(URL:[ \\t]*)[^\\n]*|\\1http://search.cpan.org/dist/$cpandist/|IMg
 "
             ;;
         php-pear-*)
@@ -187,7 +187,7 @@ if [ -z "$spectype" ] ; then
             packname="${appname##R-}"
             specfilter="
     s/^%define\\s\\s*packname\\s[^\\n]*\\n//Mg
-    s/%{packname}/$packname/g
+    s/%\\{packname}/$packname/g
 "
             ;;
         ruby-*)
@@ -250,22 +250,23 @@ fi
 if [[ $rpmver -ge 40400 ]] ; then # >= 4.4
     # filter %defattr(-,root,root(,-)) immediately after %files
     specfilter="$specfilter
-    s/^\\(%files\\b[^\\n]*\\n\\{1,\\}\\)%defattr[ \\t]*([ \\t]*-[ \\t]*,[ \\t]*root[ \\t]*,[ \\t]*root\\([ \\t]*,[ \\t]*-[ \\t]*\\)\\?)[^\\n]*\\n\\{1,\\}/\\1/Mg
+    s/^(%files\\b[^\\n]*\\n+)%defattr[ \\t]*\\([ \\t]*-[ \\t]*,[ \\t]*root[ \\t]*,[ \\t]*root([ \\t]*,[ \\t]*-[ \\t]*)?\\)[^\\n]*\\n+/\\1/Mg
 "
 fi
 if [[ $rpmver -ge 40600 ]] ; then # >= 4.6
     # filter BuildRoot and Group tags
     specfilter="$specfilter
-    s/^\\(BuildRoot\\|Group\\)\\s*:[^\\n]*\\n//IMg"
+    s/^(BuildRoot|Group)[ \\t]*:[^\\n]*\\n//IMg
+"
 fi
 # TODO: for >= 4.8 prune dummy %clean section
 
-cat "$tempspec" | sed -ne "
+cat "$tempspec" | sed -rne "
 1h
 1!H
 $ {
     g
-    s/^\\(Name:[ \\t]*\\)[^\\n]*/\\1$appname/IM
+    s/^(Name:[ \\t]*)[^\\n]*/\\1$appname/IMg
     $specfilter
     p
 }" > "$specfile"
