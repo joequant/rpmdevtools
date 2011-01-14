@@ -33,10 +33,6 @@ Exit status is 0 if the EVR's are equal, 11 if EVR1 is newer, and 12 if EVR2
 is newer.  Other exit statuses indicate problems.
 """)
 
-def vercmp((e1, v1, r1), (e2, v2, r2)):
-    rc = rpm.labelCompare((e1, v1, r1), (e2, v2, r2))
-    return rc
-
 def askforstuff(thingname):
     thing = raw_input('%s :' % thingname)
     return thing
@@ -72,7 +68,7 @@ ships eg. with yum) is available.""")
     else:
         (e1, v1, r1, e2, v2, r2) = sys.argv[1:]
     
-    rc = vercmp((e1, v1, r1), (e2, v2, r2))
+    rc = rpm.labelCompare((e1, v1, r1), (e2, v2, r2))
     if rc > 0:
         print ("%s:%s-%s is newer" % (e1, v1, r1))
         rc = 11
