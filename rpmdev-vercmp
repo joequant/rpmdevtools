@@ -68,7 +68,8 @@ ships eg. with yum) is available.""")
     else:
         (e1, v1, r1, e2, v2, r2) = sys.argv[1:]
     
-    rc = rpm.labelCompare((e1, v1, r1), (e2, v2, r2))
+    rc = rpm.labelCompare((e1 or None, v1 or None, r1 or None),
+                          (e2 or None, v2 or None, r2 or None))
     if rc > 0:
         print ("%s:%s-%s is newer" % (e1, v1, r1))
         rc = 11
