@@ -59,7 +59,8 @@ def stringToEVR(verstring):
     return (epoch, version, release)
 
 def main():
-    if len(sys.argv) > 1 and sys.argv[1] in ['-h', '--help', '-help', '--usage']:
+    if len(sys.argv) > 1 and \
+            sys.argv[1] in ('-h', '--help', '-help', '--usage'):
         usage()
         sys.exit(0)
     elif len(sys.argv) == 3:
