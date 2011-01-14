@@ -20,6 +20,8 @@ rpmdevtools 8.0 (201x-xx-xx)
     downloads things that exist in the target dir only with --force.
   - Make newspec filter some specfile constructs depending on rpm version.
   - Treat empty strings as nonexistent in rpmdev-vercmp input (#13).
+  - Parse some unusual cases better in rpmdev-vercmp 2-argument form;
+    rpmUtils.miscutils is no longer needed for that.
 
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.
