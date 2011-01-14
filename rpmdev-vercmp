@@ -75,17 +75,20 @@ def main():
         r2 = askforstuff('Release2')
     else:
         (e1, v1, r1, e2, v2, r2) = sys.argv[1:]
+
+    evr1 = '%s%s%s' % (e1 and e1 + ':' or '', v1 or '', r1 and '-' + r1 or '')
+    evr2 = '%s%s%s' % (e2 and e2 + ':' or '', v2 or '', r2 and '-' + r2 or '')
     
     rc = rpm.labelCompare((e1 or None, v1 or None, r1 or None),
                           (e2 or None, v2 or None, r2 or None))
+    fmt = '%s == %s'
     if rc > 0:
-        print ("%s:%s-%s is newer" % (e1, v1, r1))
+        fmt = '%s > %s'
         rc = 11
-    elif rc == 0:
-        print ("These are equal")
     elif rc < 0:
-        print ("%s:%s-%s is newer" % (e2, v2, r2))
+        fmt = '%s < %s'
         rc = 12
+    print (fmt % (evr1, evr2))
     sys.exit(rc)
 
 if __name__ == "__main__":

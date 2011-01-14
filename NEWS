@@ -22,6 +22,7 @@ rpmdevtools 8.0 (201x-xx-xx)
   - Treat empty strings as nonexistent in rpmdev-vercmp input (#13).
   - Parse some unusual cases better in rpmdev-vercmp 2-argument form;
     rpmUtils.miscutils is no longer needed for that.
+  - Make rpmdev-vercmp output prettier.
 
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.
