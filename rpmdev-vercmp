@@ -1,8 +1,9 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 #
 # rpmdev-vercmp -- compare rpm versions
 #
-# Copyright (c) Seth Vidal
+# Copyright (c) Seth Vidal, Ville Skyttä
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
