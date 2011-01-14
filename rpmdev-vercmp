@@ -34,7 +34,7 @@ is newer.  Other exit statuses indicate problems.
 """)
 
 def askforstuff(thingname):
-    thing = raw_input('%s :' % thingname)
+    thing = raw_input('%8s: ' % thingname)
     return thing
 
 def main():
