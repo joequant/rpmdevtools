@@ -4,7 +4,7 @@ rpmdevtools 8.0 (201x-xx-xx)
   - Don't check RPATHs for noarch by default in -setuptree macros (#657594).
   - Complete -extract in bash with more supported tarball names.
   - Add -s option to -bumpspec (#12), speed it up a bit.
-  - Sync with upstream devscripts 2.10.69.
+  - Sync with upstream devscripts 2.10.69+git.
   - Add Nils Philippsen's spectool 1.0.10.
   - Fix spectool with Icon and incompatible BuildArchitectures tags (#637000).
   - Don't shell-expand specfile preambles in spectool.
