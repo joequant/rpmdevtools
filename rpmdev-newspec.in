@@ -233,7 +233,7 @@ fi
 if [[ $rpmver -ge 40400 ]] ; then # >= 4.4
     # filter %defattr(-,root,root(,-)) immediately after %files
     specfilter="$specfilter
-    s/^(%files\\b[^\\n]*\\n+)%defattr[ \\t]*\\([ \\t]*-[ \\t]*,[ \\t]*root[ \\t]*,[ \\t]*root([ \\t]*,[ \\t]*-[ \\t]*)?\\)[^\\n]*\\n+/\\1/Mg
+    s/^(%files\\b[^\\n]*\\n)%defattr[ \\t]*\\([ \\t]*-[ \\t]*,[ \\t]*root[ \\t]*,[ \\t]*root([ \\t]*,[ \\t]*-[ \\t]*)?\\)[^\\n]*\\n/\\1/Mg
 "
 fi
 if [[ $rpmver -ge 40600 ]] ; then # >= 4.6
