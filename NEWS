@@ -23,6 +23,7 @@ rpmdevtools 8.0 (201x-xx-xx)
   - Parse some unusual cases better in -vercmp 2-argument form;
     rpmUtils.miscutils is no longer needed for that.
   - Make -vercmp output prettier.
+  - Add -diff bash completion.
 
   Jeffrey C. Ollie:
   - Define _topdir when calling rpmbuild in spectool.

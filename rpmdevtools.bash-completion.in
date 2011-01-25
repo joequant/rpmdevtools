@@ -1,7 +1,7 @@
 # bash completion for rpmdevtools
 # Requires bash-completion >= 20080705 (for _get_cword, _filedir)
 
-# TODO: rpmdev-diff, rpmdev-vercmp
+# TODO: rpmdev-vercmp
 
 _rpmdev_rpmfiles()
 {
@@ -208,6 +208,27 @@ _rpmdev_extract()
     _rpmdev_archives
 }
 complete -F _rpmdev_extract -o filenames rpmdev-extract
+
+_rpmdev_diff()
+{
+    COMPREPLY=()
+
+    local i
+    for i in ${COMP_WORDS[@]} ; do
+        [[ "$i" == -@(h|-help|v|-version) ]] && return 0
+    done
+
+    local cur=`_get_cword`
+    if [[ "$cur" == -* ]] ; then
+        # TODO: add some diff options here
+        COMPREPLY=( $( compgen -W '--contents --list --long-list --metadata
+            --help --version' -- "$cur" ) )
+        return 0
+    fi
+
+    _rpmdev_archives
+} &&
+complete -F _rpmdev_diff -o filenames rpmdev-diff
 
 # Local variables:
 # mode: shell-script
