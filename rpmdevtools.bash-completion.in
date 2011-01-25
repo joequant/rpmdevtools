@@ -54,7 +54,7 @@ _spectool()
     else
         _rpmdev_specfiles
     fi
-}
+} &&
 complete -F _spectool -o filenames spectool
 
 _rpmdev_bumpspec()
@@ -74,7 +74,7 @@ _rpmdev_bumpspec()
     else
         _rpmdev_specfiles
     fi
-}
+} &&
 complete -F _rpmdev_bumpspec -o filenames rpmdev-bumpspec
 
 _rpmdev_rmdevelrpms()
@@ -89,7 +89,7 @@ _rpmdev_rmdevelrpms()
 
     COMPREPLY=( $( compgen -W '--help --list-only --queryformat --yes
                                --version' -- `_get_cword` ) )
-}
+} &&
 complete -F _rpmdev_rmdevelrpms rpmdev-rmdevelrpms
 
 _rpmdev_setuptree()
@@ -98,7 +98,7 @@ _rpmdev_setuptree()
     if [[ "$cur" == -* ]] ; then
         COMPREPLY=( $( compgen -W '-d' -- "$cur" ) )
     fi
-}
+} &&
 complete -F _rpmdev_setuptree rpmdev-setuptree
 
 _rpmls()
@@ -113,7 +113,7 @@ _rpmls()
 
     [[ "$cur" == */* ]] || _rpm_installed_packages
     _rpmdev_rpmfiles
-}
+} &&
 complete -F _rpmls -o filenames rpmls
 
 _rpmdev_newspec()
@@ -150,7 +150,7 @@ _rpmdev_newspec()
     fi
 
     _filedir spec
-}
+} &&
 complete -F _rpmdev_newspec -o filenames rpmdev-newspec
 
 _rpminfo()
@@ -183,7 +183,7 @@ _rpminfo()
 
     [[ "$cur" == */* ]] || _rpm_installed_packages
     _rpmdev_rpmfiles
-}
+} &&
 complete -F _rpminfo -o filenames rpminfo
 
 _rpmdev_extract()
@@ -206,7 +206,7 @@ _rpmdev_extract()
     fi
 
     _rpmdev_archives
-}
+} &&
 complete -F _rpmdev_extract -o filenames rpmdev-extract
 
 _rpmdev_diff()
