@@ -1,4 +1,4 @@
-rpmdevtools 8.0 (201x-xx-xx)
+rpmdevtools 8.0 (2011-02-06)
 
   Ville Skyttä:
   - Don't check RPATHs for noarch by default in -setuptree macros (#657594).
