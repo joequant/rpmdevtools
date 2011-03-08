@@ -99,6 +99,8 @@ fmime()
             decomp="xz -dc" ;;
         application/x-lzip)
             decomp="lzip -dc" ;;
+        application/x-lrzip)
+            decomp="lrzip -dqo-" ;;
     esac
 }
 
@@ -138,9 +140,11 @@ ftype()
         if [[ -z "$decomp" ]] ; then
             case $1 in
                 # xz support added in file 5.01; no magic in lzma
-                *.@(xz|txz|lzma|tlz)) decomp="xz -dc"   ;;
+                *.@(xz|txz|lzma|tlz)) decomp="xz -dc" ;;
                 # lzip support added in file 5.00
                 *.lz)                 decomp="lzip -dc" ;;
+                # lrzip support added in file > 5.05
+                *.lrz)                decomp="lrzip -dqo-" ;;
             esac
         fi
         if [ -n "$decomp" ] ; then
