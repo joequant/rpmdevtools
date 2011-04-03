@@ -23,7 +23,7 @@
 . /etc/rc.d/init.d/functions
 
 exec="/usr/sbin/APPNAME"
-prog=$(basename $exec)
+prog=${exec##*/}
 
 [ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
 
