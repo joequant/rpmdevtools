@@ -30,6 +30,7 @@ _spectool()
 {
     COMPREPLY=()
 
+    local i
     for i in ${COMP_WORDS[@]} ; do
         [[ "$i" == -@(h|-help) ]] && return 0
     done
@@ -61,6 +62,7 @@ _rpmdev_bumpspec()
 {
     COMPREPLY=()
 
+    local i
     for i in ${COMP_WORDS[@]} ; do
         [[ "$i" == -@(h|-help|v|-version) ]] && return 0
     done
@@ -81,6 +83,7 @@ _rpmdev_rmdevelrpms()
 {
     COMPREPLY=()
 
+    local i
     for i in ${COMP_WORDS[@]} ; do
         [[ "$i" == -@(h|-help|v|-version) ]] && return 0
     done
@@ -120,6 +123,7 @@ _rpmdev_newspec()
 {
     COMPREPLY=()
 
+    local i
     for i in ${COMP_WORDS[@]} ; do
         [[ "$i" == -@(h|-help|v|-version) ]] && return 0
     done
@@ -157,6 +161,7 @@ _rpminfo()
 {
     COMPREPLY=()
 
+    local i
     for i in ${COMP_WORDS[@]} ; do
         [[ "$i" == -@(h|-help) ]] && return 0
     done
@@ -190,6 +195,7 @@ _rpmdev_extract()
 {
     COMPREPLY=()
 
+    local i
     for i in ${COMP_WORDS[@]} ; do
         [[ "$i" == -@(h|v) ]] && return 0
     done
