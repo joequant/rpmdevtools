@@ -23,7 +23,6 @@ SPECDIR="__SYSCONFDIR__/rpmdevtools"
 DEFTYPE="minimal"
 DEFSPEC="newpackage.spec"
 CONFIG="__SYSCONFDIR__/rpmdevtools/newspec.conf"
-RPMVER=""
 
 # Don't load config at rpm build time so it won't affect the man page
 if [[ -z $RPM_BUILD_ROOT && -f $CONFIG ]] ; then
@@ -33,7 +32,7 @@ fi
 version()
 {
     cat <<EOF
-rpmdev-newspec version 2.0
+rpmdev-newspec version 2.1
 
 Copyright (c) Warren Togami <warren@togami.com>, Ville Skyttä
 <ville.skytta@iki.fi>
@@ -86,8 +85,8 @@ $types}
                  Configuration variable: NEWSPEC_PREFER_MACROS, default is off.
   -r VERSION, --rpm-version VERSION
                  Filter out some spec file constructs not needed by the
-                 specified rpm(build) version and newer ones. Currently
-                 implemented: 4.4, 4.6, 4.8; default: ${RPMVER:-system rpm version}.
+                 specified rpm(build) version and newer ones. Configuration
+                 variable: NEWSPEC_MIN_RPMVER, default is system rpm version.
   -h, --help     Show this usage message and exit.
   -v, --version  Print version information and exit.
 
@@ -123,7 +122,7 @@ while [ -n "$1" ] ; do
             ;;
         -r|--rpm-version)
             shift
-            RPMVER="$1"
+            NEWSPEC_MIN_RPMVER="$1"
             ;;
         -h|--help)
             help
@@ -147,12 +146,13 @@ done
 
 rpmmaj=4
 rpmmin=4
-[[ -n $RPMVER ]] || RPMVER=$(rpm --version 2>/dev/null)
-if [[ $RPMVER =~ (^|.* )([0-9]{1,})(\.([0-9]{1,}))? ]] ; then
+rpmver="${NEWSPEC_MIN_RPMVER:-$RPMVER}" # RPMVER: 2.0 backwards compat
+[[ -n $rpmver ]] || rpmver=$(rpm --version 2>/dev/null)
+if [[ $rpmver =~ (^|.* )([0-9]{1,})(\.([0-9]{1,}))? ]] ; then
     rpmmaj=${BASH_REMATCH[2]}
     rpmmin=${BASH_REMATCH[4]:-0}
 else
-    echo "Unrecognized rpm version '$RPMVER', using $rpmmaj.$rpmmin" \
+    echo "Unrecognized rpm version '$rpmver', using $rpmmaj.$rpmmin" \
         > /dev/stderr
 fi
 # major * 10000 + minor * 100 ( + micro perhaps later )
@@ -230,7 +230,7 @@ elif [ "$specfile" = "-" ] ; then
     specfile=/dev/stdout
 fi
 
-# If enabling more versions, remember to update --help and bash completion too.
+# If enabling more versions, remember to update bash completion too.
 if [[ $rpmver -ge 40400 ]] ; then # >= 4.4
     # filter %defattr(-,root,root(,-)) immediately after %files
     specfilter="$specfilter
