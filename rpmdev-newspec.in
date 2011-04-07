@@ -83,6 +83,7 @@ Options:
                  given.${types:+ Available types:
 $types}
   -m, --macros   Emit templates using macros instead of shell style variables.
+                 Configuration variable: NEWSPEC_PREFER_MACROS, default is off.
   -r VERSION, --rpm-version VERSION
                  Filter out some spec file constructs not needed by the
                  specified rpm(build) version and newer ones. Currently
