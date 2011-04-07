@@ -5,6 +5,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Use pigz and lbzip2/pbzip2 in -extract if available.
   - Add lrzip support to -extract.
   - Avoid leaking $i from various bash completions.
+  - -newspec -r related doc and completion improvements (#694579).
 
 rpmdevtools 8.0 (2011-02-06)
 

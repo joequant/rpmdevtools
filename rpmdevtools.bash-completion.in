@@ -142,7 +142,8 @@ _rpmdev_newspec()
             return 0
             ;;
         -r|--rpm-version)
-            COMPREPLY=( $( compgen -W '4.4 4.6 4.8' -- "$cur" ) )
+            # 4.3: no constructs filtered
+            COMPREPLY=( $( compgen -W '4.3 4.4 4.6 4.8' -- "$cur" ) )
             return 0
             ;;
     esac
