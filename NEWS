@@ -6,6 +6,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Add lrzip support to -extract.
   - Avoid leaking $i from various bash completions.
   - -newspec -r related doc and completion improvements (#694579).
+  - Use completion features from bash-completion 1.2+ if available.
 
 rpmdevtools 8.0 (2011-02-06)
 
