@@ -1,8 +1,6 @@
 # bash completion for rpmdevtools
 # Requires bash-completion >= 20080705 (for _filedir)
 
-# TODO: rpmdev-vercmp
-
 _rpmdev_curprev()
 {
     if type _get_comp_words_by_ref &>/dev/null ; then
@@ -253,6 +251,23 @@ _rpmdev_diff()
     _rpmdev_archives
 } &&
 complete -F _rpmdev_diff -o filenames rpmdev-diff
+
+_rpmdev_vercmp()
+{
+    COMPREPLY=()
+
+    local i
+    for i in ${COMP_WORDS[@]} ; do
+        [[ "$i" == -@(h|-help|u|-usage) ]] && return 0
+    done
+
+    local cur prev ; _rpmdev_curprev "$2" "$3"
+
+    if [[ $cur == -* ]] ; then
+        COMPREPLY=( $( compgen -W '--help' -- "$cur" ) )
+    fi
+} &&
+complete -F _rpmdev_vercmp rpmdev-vercmp
 
 # Local variables:
 # mode: shell-script
