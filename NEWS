@@ -1,7 +1,7 @@
 rpmdevtools x.x (201x-xx-xx)
 
   Ville Skyttä:
-  - Sync with upstream devscripts 2.10.71+git.
+  - Sync with upstream devscripts 2.10.72+git.
   - Use pigz and lbzip2/pbzip2 in -extract if available.
   - Add lrzip support to -extract.
   - Avoid leaking $i from various bash completions.
