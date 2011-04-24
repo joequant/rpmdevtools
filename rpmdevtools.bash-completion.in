@@ -15,12 +15,6 @@ _rpmdev_archives()
     _filedir '@([rs]pm|deb|zip|?([ejtw])ar|tzo|[glx7]z|bz2|lzma|t@(bz?(2)|[glx]z)|cpio|arj|zoo|cab|rar|ace|lha)'
 }
 
-_rpmdev_specfiles()
-{
-    local cur=${cur:-`_get_cword`}
-    _filedir spec
-}
-
 complete -F _rpmdev_rpmfiles -o filenames rpmdev-checksig
 
 complete -F _rpmdev_archives -o filenames \
@@ -53,7 +47,7 @@ _spectool()
                                    --define --directory --sourcedir --dry-run
                                    --force --debug' -- "$cur" ) )
     else
-        _rpmdev_specfiles
+        _filedir spec
     fi
 } &&
 complete -F _spectool -o filenames spectool
@@ -74,7 +68,7 @@ _rpmdev_bumpspec()
         COMPREPLY=( $( compgen -W '--help --comment --userstring --rightmost
                                    --verbose --version' -- "$cur" ) )
     else
-        _rpmdev_specfiles
+        _filedir spec
     fi
 } &&
 complete -F _rpmdev_bumpspec -o filenames rpmdev-bumpspec
