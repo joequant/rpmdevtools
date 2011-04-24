@@ -23,7 +23,7 @@ _rpmdev_archives()
     if [[ ${#@} -ne 0 ]] ; then # called directly as completion function
         local cur prev ; _rpmdev_curprev "$2" "$3"
     fi
-    _filedir '@([rs]pm|deb|zip|?([ejtw])ar|tzo|[glx7]z|bz2|lzma|t@(bz?(2)|[glx]z)|cpio|arj|zoo|cab|rar|ace|lha)'
+    _filedir '@([rs]pm|deb|zip|?([ejtw])ar|tzo|[glx7]z|bz2|lzma|lrz|t@(bz?(2)|[glx]z)|cpio|arj|zoo|cab|rar|ace|lha)'
 }
 
 complete -F _rpmdev_rpmfiles -o filenames rpmdev-checksig
