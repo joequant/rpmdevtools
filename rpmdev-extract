@@ -82,7 +82,7 @@ _cmd()
 
 fmime()
 {
-    case "${1%%;*}" in
+    case ${1%%;*} in
         application/x-zip|application/zip)                  ftype=zip  ;;
         application/x-tar*)                                 ftype=tar  ;;
         application/x-rpm)                                  ftype=rpm  ;;
@@ -108,19 +108,19 @@ ftype()
 {
     t=$(file -ibL "$1" 2>/dev/null)
     fmime "$t"
-    [ -n "$ftype" ] && return
+    [[ -n $ftype ]] && return
 
     t=$(file -zibL "$1" 2>/dev/null)
     fmime "$t"
-    [ -n "$ftype" ] && return
+    [[ -n $ftype ]] && return
 
     t=$(file -bL "$1" 2>/dev/null)
-    case "$t" in
+    case $t in
         *lzop\ compressed*)                          decomp="lzop -dc" ;;
     esac
 
     t=$(file -zbL "$1" 2>/dev/null)
-    case "$t" in
+    case $t in
         *7-zip\ archive*)                                   ftype=7z   ;;
         *Z[iI][pP]\ *archive*)                              ftype=zip  ;;
         *tar\ archive*)                                     ftype=tar  ;;
@@ -136,8 +136,8 @@ ftype()
     esac
 
     # Fallback stuff for things not (enough) supported by file(1).
-    if [ -z "$ftype" ] ; then
-        if [[ -z "$decomp" ]] ; then
+    if [[ -z $ftype ]] ; then
+        if [[ -z $decomp ]] ; then
             case $1 in
                 # xz support added in file 5.01; no magic in lzma
                 *.@(xz|txz|lzma|tlz)) decomp="xz -dc" ;;
@@ -147,8 +147,8 @@ ftype()
                 *.lrz)                decomp="lrzip -dqo-" ;;
             esac
         fi
-        if [ -n "$decomp" ] ; then
-            case "$1" in
+        if [[ -n $decomp ]] ; then
+            case $1 in
                 *.tar.*|*.tzo|*.tlz|*.txz)                  ftype=tar  ;;
                 *.cpio.*)                                   ftype=cpio ;;
             esac
@@ -159,18 +159,18 @@ ftype()
 unarch()
 {
     ftype "$1"
-    case "$ftype" in
+    case $ftype in
         tar)
-            [ -n "$force" ] && o= || o=k
-            [ -n "$quiet" ] && v= || v=v
+            [[ -n $force ]] && o= || o=k
+            [[ -n $quiet ]] && v= || v=v
             ${decomp:-cat} "$1" | tar x$v$o
             ;;
         zip)
-            [ -n "$force" ] && o=-o || o=-n
+            [[ -n $force ]] && o=-o || o=-n
             unzip $o "$1"
             ;;
         rar)
-            [ -n "$force" ] && o=+ || o=-
+            [[ -n $force ]] && o=+ || o=-
             unrar x -o$o -y "$1"
             ;;
         cab)
@@ -196,7 +196,7 @@ unarch()
             ar xvo "$1"
             ;;
         ace)
-            [ -n "$force" ] && o=+ || o=-
+            [[ -n $force ]] && o=+ || o=-
             unace x -o$o -y "$1"
             ;;
         arj)
@@ -223,8 +223,8 @@ unarch()
 
 dir="$PWD"
 
-while getopts "qfC:hv" key ; do
-    case "$key" in
+while getopts qfC:hv key ; do
+    case $key in
         q) quiet=1 ;;
         f) force=1 ;;
         C) dir="$OPTARG" ;;
@@ -237,8 +237,8 @@ shift $(( $OPTIND -1 ))
 
 files=()
 for file in "$@" ; do
-    if [ ! -f "$file" ] ; then
-        [ -e "$file" ] && \
+    if [[ ! -f $file ]] ; then
+        [[ -e $file ]] && \
             echo "Error: not a regular file: '$file'" >&2 ||
             echo "Error: file does not exist: '$file'" >&2
         exit 1
@@ -246,8 +246,8 @@ for file in "$@" ; do
     [[ $file == /* ]] && files+=( "$file" ) || files+=( "$PWD/$file" )
 done
 
-if [ ! -d "$dir" ] ; then
-    [ -e "$dir" ] && \
+if [[ ! -d $dir ]] ; then
+    [[ -e $dir ]] && \
         echo "Error: not a directory: '$dir'" >&2 ||
         echo "Error: directory does not exist: '$dir'" >&2
     exit 1
@@ -258,7 +258,7 @@ for file in "${files[@]}" ; do
     # Not that fancy at the moment, but -q is for backwards compatibility
     # and in case we need to do more fine-grained stuff for some unarchivers
     # later.
-    if [ -n "$quiet" ] ; then
+    if [[ -n $quiet ]] ; then
         unarch "$file" >/dev/null
     else
         unarch "$file"
