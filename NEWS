@@ -3,6 +3,7 @@ rpmdevtools x.x (201x-xx-xx)
   Ville Skyttä:
   - Make -bumpspec write changelog timestamp in UTC.
   - Make -extract work with multiple rpms from relative paths (#730120).
+  - Make -extract work with all combinations of supported archive types.
 
 rpmdevtools 8.1 (2011-04-26)
 

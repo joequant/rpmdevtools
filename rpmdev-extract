@@ -23,8 +23,6 @@
 
 set -e
 unset CDPATH
-ftype=
-decomp=
 quiet=
 force=
 dir=
@@ -106,6 +104,8 @@ fmime()
 
 ftype()
 {
+    ftype= decomp=
+
     t=$(file -ibL "$1" 2>/dev/null)
     fmime "$t"
     [[ -n $ftype ]] && return
