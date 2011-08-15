@@ -34,7 +34,7 @@ shopt -s extglob
 version()
 {
     cat <<EOF
-rpmdev-extract version 1.9
+rpmdev-extract version 1.10
 
 Copyright (c) 2004-2011 Ville Skyttä <ville.skytta@iki.fi>
 This program is free software; you can redistribute it and/or modify
@@ -158,73 +158,67 @@ ftype()
 
 unarch()
 {
-    case "$1" in
-        /*) f="$1" ;;
-        *)  f="$PWD/$1" ;;
-    esac
     ftype "$1"
-    cd "$2"
     case "$ftype" in
         tar)
             [ -n "$force" ] && o= || o=k
             [ -n "$quiet" ] && v= || v=v
-            ${decomp:-cat} "$f" | tar x$v$o
+            ${decomp:-cat} "$1" | tar x$v$o
             ;;
         zip)
             [ -n "$force" ] && o=-o || o=-n
-            unzip $o "$f"
+            unzip $o "$1"
             ;;
         rar)
             [ -n "$force" ] && o=+ || o=-
-            unrar x -o$o -y "$f"
+            unrar x -o$o -y "$1"
             ;;
         cab)
             # force not supported, it's always on (as of cabextract 1.[01])
-            cabextract -f "$f"
+            cabextract -f "$1"
             ;;
         rpm)
             qf='%{NAME}-%{VERSION}-%{RELEASE}.%|SOURCERPM?{%{ARCH}}:{src}|'
-            name=$(rpm -qp --qf="$qf" --nodigest --nosignature "$f")
+            name=$(rpm -qp --qf="$qf" --nodigest --nosignature "$1")
             mkdir -p "$name"
             cd "$name"
-            rpm2cpio "$f" \
+            rpm2cpio "$1" \
             | cpio --quiet --no-absolute-filenames -id${force:+u}mv 2>&1 \
             | sed "s|^\(\./\)\?|$name/|"
-            cd ..
+            cd - &>/dev/null
             ;;
         cpio)
-            ${decomp:-cat} "$f" | \
+            ${decomp:-cat} "$1" | \
                 cpio --quiet --no-absolute-filenames -id${force:+u}mv
             ;;
         ar)
             # force not supported, it's always on
-            ar xvo "$f"
+            ar xvo "$1"
             ;;
         ace)
             [ -n "$force" ] && o=+ || o=-
-            unace x -o$o -y "$f"
+            unace x -o$o -y "$1"
             ;;
         arj)
             # force not supported, it's always off (as of unarj 2.6[35])
             # it will also return an error if some files already exist :(
-            unarj x "$f"
+            unarj x "$1"
             ;;
         zoo)
-            zoo x${force:+OOS} "$f"
+            zoo x${force:+OOS} "$1"
             ;;
         lha)
-            lha x${force:+f} "$f" < /dev/null
+            lha x${force:+f} "$1" < /dev/null
             ;;
         7z)
             # -y is as close to force as we have as of p7zip 4.51
-            7za x ${force:+-y} "$f"
+            7za x ${force:+-y} "$1"
             ;;
         *)
-            echo "Error: unrecognized archive: '$f'" >&2
+            echo "Error: unrecognized archive: '$1'" >&2
             exit 1
             ;;
     esac
-    cd - >/dev/null 2>&1
 }
 
 dir="$PWD"
@@ -241,13 +235,7 @@ while getopts "qfC:hv" key ; do
 done
 shift $(( $OPTIND -1 ))
 
-if [ ! -d "$dir" ] ; then
-    [ -e "$dir" ] && \
-        echo "Error: not a directory: '$dir'" >&2 ||
-        echo "Error: directory does not exist: '$dir'" >&2
-    exit 1
-fi
-
+files=()
 for file in "$@" ; do
     if [ ! -f "$file" ] ; then
         [ -e "$file" ] && \
@@ -255,12 +243,24 @@ for file in "$@" ; do
             echo "Error: file does not exist: '$file'" >&2
         exit 1
     fi
+    [[ $file == /* ]] && files+=( "$file" ) || files+=( "$PWD/$file" )
+done
+
+if [ ! -d "$dir" ] ; then
+    [ -e "$dir" ] && \
+        echo "Error: not a directory: '$dir'" >&2 ||
+        echo "Error: directory does not exist: '$dir'" >&2
+    exit 1
+fi
+cd "$dir"
+
+for file in "${files[@]}" ; do
     # Not that fancy at the moment, but -q is for backwards compatibility
     # and in case we need to do more fine-grained stuff for some unarchivers
     # later.
     if [ -n "$quiet" ] ; then
-        unarch "$file" "$dir" >/dev/null
+        unarch "$file" >/dev/null
     else
-        unarch "$file" "$dir"
+        unarch "$file"
     fi
 done
