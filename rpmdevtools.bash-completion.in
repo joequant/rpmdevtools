@@ -125,7 +125,8 @@ _rpmls()
         return 0
     fi
 
-    [[ "$cur" == */* ]] || _rpm_installed_packages
+    [[ $cur != */* ]] && declare -F _rpm_installed_packages &>/dev/null && \
+        _rpm_installed_packages
     _rpmdev_rpmfiles
 } &&
 complete -F _rpmls -o filenames rpmls
@@ -200,7 +201,8 @@ _rpminfo()
         return 0
     fi
 
-    [[ "$cur" == */* ]] || _rpm_installed_packages
+    [[ $cur != */* ]] && declare -F _rpm_installed_packages &>/dev/null && \
+        _rpm_installed_packages
     _rpmdev_rpmfiles
 } &&
 complete -F _rpminfo -o filenames rpminfo
