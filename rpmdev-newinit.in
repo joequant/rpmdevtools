@@ -18,8 +18,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-TEMPLATE="__SYSCONFDIR__/rpmdevtools/template.init"
-DEFNAME="newinitscript.init"
+TEMPLATE=__SYSCONFDIR__/rpmdevtools/template.init
+DEFNAME=newinitscript.init
 
 version()
 {
@@ -64,14 +64,14 @@ appname=
 output=
 output_set=
 
-while [ -n "$1" ] ; do
-    case "$1" in
+while [[ $1 ]] ; do
+    case $1 in
         -o|--output)
             shift
             output="$1"
             output_set=1
-            case "$output" in
-                *.init) [ -z "$appname" ] && appname="$(basename $1 .init)" ;;
+            case $output in
+                *.init) [[ -z $appname ]] && appname="$(basename $1 .init)" ;;
             esac
             ;;
         -h|--help)
@@ -83,31 +83,31 @@ while [ -n "$1" ] ; do
             exit 0
             ;;
         *.init)
-            [ -z "$output" ] && output="$1"
+            [[ -z $output ]] && output="$1"
             appname="$(basename $1 .init)"
             ;;
         *)
             appname="$1"
-            [ -z "$output" ] && output="$appname.init"
+            [[ -z $output ]] && output="$appname.init"
             ;;
     esac
     shift
 done
 
-[ -z "$output" ] && output="$DEFNAME"
-if [ -f "$output" ] ; then
+[[ -z $output ]] && output="$DEFNAME"
+if [[ -f $output ]] ; then
     echo "Output file \"$output\" already exists, exiting."
     exit 2
-elif [ "$output" = "-" ] ; then
+elif [[ $output == - ]] ; then
     output=/dev/stdout
 fi
 
-if [ -z "$appname" ] ; then
+if [[ -z $appname ]] ; then
     cat "$TEMPLATE" > "$output"
 else
     sed -e "s|APPNAME|$appname|g" "$TEMPLATE" > "$output"
 fi
 
-if [ "$output" != "/dev/stdout" ] ; then
+if [[ $output != /dev/stdout ]] ; then
     echo "Skeleton init script has been created to \"$output\"."
 fi

@@ -19,10 +19,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-SPECDIR="__SYSCONFDIR__/rpmdevtools"
-DEFTYPE="minimal"
-DEFSPEC="newpackage.spec"
-CONFIG="__SYSCONFDIR__/rpmdevtools/newspec.conf"
+SPECDIR=__SYSCONFDIR__/rpmdevtools
+DEFTYPE=minimal
+DEFSPEC=newpackage.spec
+CONFIG=__SYSCONFDIR__/rpmdevtools/newspec.conf
 
 # Don't load config at rpm build time so it won't affect the man page
 if [[ -z $RPM_BUILD_ROOT && -f $CONFIG ]] ; then
@@ -59,12 +59,12 @@ usage() {
     # Don't emit available types at build time to avoid them from being
     # embedded in the man page.
     types=
-    if [ -z "$RPM_BUILD_ROOT" ] ; then
+    if [[ -z $RPM_BUILD_ROOT ]] ; then
         indent="                     "
         types=$(ls $SPECDIR/spectemplate-*.spec 2>/dev/null | \
             sed 's,.*spectemplate-,,;s,\.spec$,,' | tr '\n' ' ' | \
             fmt -w 60 | sed "s/^/$indent/")
-        [ -z "$types" ] && types="${indent}None ($SPECDIR/spectemplate-*.spec)"
+        [[ -z $types ]] && types="${indent}None ($SPECDIR/spectemplate-*.spec)"
     fi
 
     cat <<EOF
@@ -103,8 +103,8 @@ specfile=
 spectype=
 specfile_set=
 
-while [ -n "$1" ] ; do
-    case "$1" in
+while [[ $1 ]] ; do
+    case $1 in
         -t|--type)
             shift
             spectype="$1"
@@ -113,8 +113,8 @@ while [ -n "$1" ] ; do
             shift
             specfile="$1"
             specfile_set=1
-            case "$specfile" in
-                *.spec) [ -z "$appname" ] && appname="$(basename $1 .spec)" ;;
+            case $specfile in
+                *.spec) [[ -z $appname ]] && appname="$(basename $1 .spec)" ;;
             esac
             ;;
         -m|--macros)
@@ -133,12 +133,12 @@ while [ -n "$1" ] ; do
             exit 0
             ;;
         *.spec)
-            [ -z "$specfile" ] && specfile="$1"
+            [[ -z $specfile ]] && specfile="$1"
             appname="$(basename $1 .spec)"
             ;;
         *)
             appname="$1"
-            [ -z "$specfile" ] && specfile="$appname.spec"
+            [[ -z $specfile ]] && specfile="$appname.spec"
             ;;
     esac
     shift
@@ -147,7 +147,7 @@ done
 rpmmaj=4
 rpmmin=4
 rpmver="${NEWSPEC_MIN_RPMVER:-$RPMVER}" # RPMVER: 2.0 backwards compat
-[[ -n $rpmver ]] || rpmver=$(rpm --version 2>/dev/null)
+[[ $rpmver ]] || rpmver=$(rpm --version 2>/dev/null)
 if [[ $rpmver =~ (^|.* )([0-9]{1,})(\.([0-9]{1,}))? ]] ; then
     rpmmaj=${BASH_REMATCH[2]}
     rpmmin=${BASH_REMATCH[4]:-0}
@@ -159,8 +159,8 @@ fi
 rpmver=$(( $rpmmaj * 10000 + $rpmmin * 100 ))
 
 specfilter=
-if [ -z "$spectype" ] ; then
-    case "$appname" in
+if [[ -z $spectype ]] ; then
+    case $appname in
         ocaml-*)
             spectype="${appname%%-*}"
             libname="${appname##ocaml-}"
@@ -201,13 +201,13 @@ if [ -z "$spectype" ] ; then
             spectype=fonts-simple
             appname="${appname%%-simple}"
             specfilter="s/<FONTNAME>/${appname%%-fonts}/g"
-            [ -n "$specfile_set" ] || specfile="$appname.spec"
+            [[ $specfile_set ]] || specfile="$appname.spec"
             ;;
         *-fonts-multi)
             spectype=fonts-multi
             appname="${appname%%-multi}"
             specfilter="s/<FONTNAME>/${appname%%-fonts}/g"
-            [ -n "$specfile_set" ] || specfile="$appname.spec"
+            [[ $specfile_set ]] || specfile="$appname.spec"
             ;;
         *)
             spectype=$DEFTYPE
@@ -217,16 +217,16 @@ fi
 
 tempspec="$SPECDIR/spectemplate-$spectype.spec"
 
-if [ ! -f "$tempspec" ] ; then
+if [[ ! -f $tempspec ]] ; then
     echo "Template \"$tempspec\" not found, exiting."
     exit 1
 fi
 
-[ -z "$specfile" ] && specfile="$DEFSPEC"
-if [ -f "$specfile" ] ; then
+[[ -z $specfile ]] && specfile="$DEFSPEC"
+if [[ -f $specfile ]] ; then
     echo "Output file \"$specfile\" already exists, exiting."
     exit 2
-elif [ "$specfile" = "-" ] ; then
+elif [[ $specfile == - ]] ; then
     specfile=/dev/stdout
 fi
 
@@ -250,7 +250,7 @@ if [[ $rpmver -ge 40800 ]] ; then # >= 4.8
 "
 fi
 
-if [ -n "$NEWSPEC_PREFER_MACROS" ] ; then
+if [[ $NEWSPEC_PREFER_MACROS ]] ; then
     # This assumes templates are written using the shell style variables,
     # without surrounding curly braces.
     specfilter="$specfilter
@@ -277,6 +277,6 @@ $ {
     p
 }" > "$specfile"
 
-if [ "$specfile" != "/dev/stdout" ] ; then
+if [[ $specfile != /dev/stdout ]] ; then
     echo "$specfile created; type $spectype, rpm version >= $rpmmaj.$rpmmin."
 fi

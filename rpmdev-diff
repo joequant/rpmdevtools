@@ -94,53 +94,53 @@ rpm_meta()
 }
 
 while true ; do
-    case "$1" in
+    case $1 in
         -l|--list)
-            if [ -n "$list$diffopts" ] ; then
-                diffopts="$diffopts $1"
+            if [[ $list$diffopts ]] ; then
+                diffopts+=" $1"
             else
                 list=true
             fi
             ;;
         -L|--long-list)
-            if [ -n "$long$diffopts" ] ; then
-                diffopts="$diffopts $1"
+            if [[ $long$diffopts ]] ; then
+                diffopts+=" $1"
             else
                 long=true
             fi
             ;;
         -c|--contents)
-            if [ -n "$contents$diffopts" ] ; then
-                diffopts="$diffopts $1"
+            if [[ $contents$diffopts ]] ; then
+                diffopts+=" $1"
             else
                 contents=true
             fi
             ;;
         -m|--metadata)
-            if [ -n "$meta$diffopts" ] ; then
-                diffopts="$diffopts $1"
+            if [[ $meta$diffopts ]] ; then
+                diffopts+=" $1"
             else
                 meta=true
             fi
             ;;
         -h|--help)
-            if [ -n "$diffopts" ] ; then
-                diffopts="$diffopts $1"
+            if [[ $diffopts ]] ; then
+                diffopts+=" $1"
             else
                 help
                 exit 0
             fi
             ;;
         -v|--version)
-            if [ -n "$diffopts" ] ; then
-                diffopts="$diffopts $1"
+            if [[ $diffopts ]] ; then
+                diffopts+=" $1"
             else
                 version
                 exit 0
             fi
             ;;
         -*)
-            diffopts="$diffopts $1"
+            diffopts+=" $1"
             ;;
         *)
             break
@@ -148,13 +148,13 @@ while true ; do
     esac
     shift
 done
-if [ $# -lt 2 ] ; then
+if [[ $# -lt 2 ]] ; then
     usage
     exit 1
 fi
 for file in "$1" "$2" ; do
-    if [ ! -f "$file" ] ; then
-        [ -e "$file" ] && \
+    if [[ ! -f $file ]] ; then
+        [[ -e $file ]] && \
             echo "Error: not a regular file: '$file'" >&2 ||
             echo "Error: file does not exist: '$file'" >&2
         exit 1
@@ -179,31 +179,31 @@ chmod -R u+rw "$tmpdir"/*
 cd "$tmpdir"
 
 # Did the archives uncompress into base dirs?
-if [ `ls -1d old/* | wc -l` -eq 1 ] ; then
-  old=`ls -1d old/*`
+if [[ $(ls -1d old/* | wc -l) -eq 1 ]] ; then
+  old=$(ls -1d old/*)
 else
   old=old
 fi
-if [ `ls -1d new/* | wc -l` -eq 1 ] ; then
-  new=`ls -1d new/*`
+if [[ $(ls -1d new/* | wc -l) -eq 1 ]] ; then
+  new=$(ls -1d new/*)
 else
   new=new
 fi
 
 # Fixup base dirs to the same level.
-if [ `basename "$old"` != `basename "$new"` ] ; then
-  if [ "$old" != old ] ; then
+if [[ $(basename "$old") != $(basename "$new") ]] ; then
+  if [[ $old != old ]] ; then
     mv "$old" .
     old=`basename "$old"`
   fi
-  if [ "$new" != new ] ; then
+  if [[ $new != new ]] ; then
     mv "$new" .
     new=`basename "$new"`
   fi
 fi
 
 # Contents mode is the default.
-if [ -z "$list$long$meta$contents" ] ; then
+if [[ -z $list$long$meta$contents ]] ; then
     contents=true
 else
     contents=${contents:-false}
@@ -217,7 +217,7 @@ meta=${meta:-false}
 if $meta ; then
     set +e
     diff ${diffopts:-$diffoopts} old.meta new.meta
-    [ $? -eq 0 -o $? -eq 1 ] || exit $?
+    [[ $? -eq 0 || $? -eq 1 ]] || exit $?
     set -e
 fi
 
@@ -226,7 +226,7 @@ if $list ; then
     find "$new" | sort | cut -d/ -f 2- -s > "$new.files"
     set +e
     diff ${diffopts:-$diffoopts} "$old.files" "$new.files"
-    [ $? -eq 0 -o $? -eq 1 ] || exit $?
+    [[ $? -eq 0 || $? -eq 1 ]] || exit $?
     set -e
 fi
 
@@ -241,13 +241,13 @@ if $long ; then
         sort > "$new.files"
     set +e
     diff ${diffopts:-$diffoopts} "$old.files" "$new.files"
-    [ $? -eq 0 -o $? -eq 1 ] || exit $?
+    [[ $? -eq 0 || $? -eq 1 ]] || exit $?
     set -e
 fi
 
 if $contents ; then
     set +e
     diff -r ${diffopts:-$diffcopts} "$old" "$new"
-    [ $? -eq 0 -o $? -eq 1 ] || exit $?
+    [[ $? -eq 0 || $? -eq 1 ]] || exit $?
     set -e
 fi
