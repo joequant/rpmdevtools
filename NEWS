@@ -7,6 +7,9 @@ rpmdevtools x.x (201x-xx-xx)
   - Cope with _rpm_installed_packages function N/A in bash completion.
   - Sync with upstream devscripts 2.11.1+git.
 
+  Tom Hughes:
+  - Make main package dep in lib spec template ISA qualified (#751582).
+
 rpmdevtools 8.1 (2011-04-26)
 
   Ville Skyttä:
