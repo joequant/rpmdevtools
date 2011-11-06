@@ -437,9 +437,9 @@ sub parselicense($) {
 	$license = "QPL $license";
     }
 
-    if ($licensetext =~ /http:\/\/opensource\.org\/licenses\/mit-license\.php/) {
+    if ($licensetext =~ /opensource\.org\/licenses\/mit-license\.php/) {
 	$license = "MIT/X11 (BSD like) $license";
-    } elsif ($licensetext =~ /Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files \(the Software\), to deal in the Software/) {
+    } elsif ($licensetext =~ /Permission is hereby granted, free of charge, to any person obtaining a copy of this software and(\/or)? associated documentation files \(the (Software|Materials)\), to deal in the (Software|Materials)/) {
 	$license = "MIT/X11 (BSD like) $license";
     } elsif ($licensetext =~ /Permission is hereby granted, without written agreement and without license or royalty fees, to use, copy, modify, and distribute this software and its documentation for any purpose/) {
 	$license = "MIT/X11 (BSD like) $license";
@@ -505,6 +505,10 @@ sub parselicense($) {
 	$license = "CDDL " . ($1 ? "(v$2) " : '') . $license;
     }
 
+    if ($licensetext =~ /Microsoft Permissive License \(Ms-PL\)/) {
+        $license = "Ms-PL $license";
+    }
+
     if ($licensetext =~ /Permission is hereby granted, free of charge, to any person or organization obtaining a copy of the software and accompanying documentation covered by this license \(the \"Software\"\)/ or
 	$licensetext =~ /Boost Software License([ ,-]+Version ([^ ]+)?(\.))/i) {
 	$license = "BSL " . ($1 ? "(v$2) " : '') . $license;
@@ -517,6 +521,8 @@ sub parselicense($) {
     if ($licensetext =~ /The origin of this software must not be misrepresented.*Altered source versions must be plainly marked as such.*This notice may not be removed or altered from any source distribution/ or
         $licensetext =~ /see copyright notice in zlib\.h/) {
 	$license = "zlib/libpng $license";
+    } elsif ($licensetext =~ /This code is released under the libpng license/) {
+        $license = "libpng $license";
     }
 
     if ($licensetext =~ /Do What The Fuck You Want To Public License, Version ([^, ]+)/i) {
