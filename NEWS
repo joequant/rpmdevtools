@@ -4,7 +4,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Make -bumpspec write changelog timestamp in UTC.
   - Make -extract work with multiple rpms from relative paths (#730120).
   - Make -extract work with all combinations of supported archive types.
-  - Cope with _rpm_installed_packages function N/A in bash completion.
+  - Cope with _rpm_installed_packages function N/A or loaded on demand.
   - Sync with upstream devscripts 2.11.1+git.
 
   Tom Hughes:

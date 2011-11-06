@@ -1,6 +1,16 @@
 # bash completion for rpmdevtools
 # Requires bash-completion >= 20080705 (for _filedir)
 
+_rpmdev_installed_packages()
+{
+    if declare -F _rpm_installed_packages &>/dev/null ; then
+        _rpm_installed_packages
+    elif declare -F _xfunc &>/dev/null ; then
+        # bash-completion 1.90+ dynamic loading
+        _xfunc rpm _rpm_installed_packages
+    fi
+}
+
 _rpmdev_curprev()
 {
     if declare -F _get_comp_words_by_ref &>/dev/null ; then
@@ -125,8 +135,7 @@ _rpmls()
         return 0
     fi
 
-    [[ $cur != */* ]] && declare -F _rpm_installed_packages &>/dev/null && \
-        _rpm_installed_packages
+    [[ $cur != */* ]] && _rpmdev_installed_packages
     _rpmdev_rpmfiles
 } &&
 complete -F _rpmls -o filenames rpmls
@@ -201,8 +210,7 @@ _rpminfo()
         return 0
     fi
 
-    [[ $cur != */* ]] && declare -F _rpm_installed_packages &>/dev/null && \
-        _rpm_installed_packages
+    [[ $cur != */* ]] && _rpmdev_installed_packages
     _rpmdev_rpmfiles
 } &&
 complete -F _rpminfo -o filenames rpminfo
