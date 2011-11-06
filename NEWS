@@ -1,4 +1,4 @@
-rpmdevtools x.x (201x-xx-xx)
+rpmdevtools 8.2 (2011-11-12)
 
   Ville Skyttä:
   - Make -bumpspec write changelog timestamp in UTC.
