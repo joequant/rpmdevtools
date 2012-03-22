@@ -4,6 +4,9 @@ rpmdevtools x.x (201x-xx-xx)
   - Make -bumpspec bump subpackage releases too (#789330).
   - Sync with upstream devscripts 2.11.5.
 
+  Richard W.M. Jones:
+  - Make licencecheck check OCaml programs by default.
+
 rpmdevtools 8.2 (2011-11-12)
 
   Ville Skyttä:
