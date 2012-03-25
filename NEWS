@@ -2,6 +2,7 @@ rpmdevtools x.x (201x-xx-xx)
 
   Ville Skyttä:
   - Make -bumpspec bump subpackage releases too (#789330).
+  - Sync with upstream devscripts 2.11.5.
 
 rpmdevtools 8.2 (2011-11-12)
 
