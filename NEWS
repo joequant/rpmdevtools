@@ -7,6 +7,9 @@ rpmdevtools x.x (201x-xx-xx)
   Richard W.M. Jones:
   - Make licencecheck check OCaml programs by default.
 
+  Pádraig Brady:
+  - Use nproc for _smp_mflags in -setuptree if available.
+
 rpmdevtools 8.2 (2011-11-12)
 
   Ville Skyttä:
