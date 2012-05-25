@@ -51,13 +51,8 @@ my ($opt_help, $opt_version);
 my @filenames;
 
 # Detect if STDIN is a pipe
-if (-p STDIN or -f STDIN) {
-    my ($tmp_fh, $tmp_filename) = tempfile("chkbashisms_tmp.XXXX", TMPDIR => 1, UNLINK => 1);
-    while (my $line = <STDIN>) {
-        print $tmp_fh $line;
-    }
-    close($tmp_fh);
-    push(@ARGV, $tmp_filename);
+if (scalar(@ARGV) == 0 && (-p STDIN or -f STDIN)) {
+    push(@ARGV, '-');
 }
 
 ##
@@ -90,8 +85,15 @@ foreach my $filename (@ARGV) {
     my $check_lines_count = -1;
 
     my $display_filename = $filename;
-    if ($filename =~ /chkbashisms_tmp\.....$/) {
-        $display_filename = "(stdin)";
+
+    if ($filename eq '-') {
+	my $tmp_fh;
+	($tmp_fh, $filename) = tempfile("chkbashisms_tmp.XXXX", TMPDIR => 1, UNLINK => 1);
+	while (my $line = <STDIN>) {
+	    print $tmp_fh $line;
+	}
+	close($tmp_fh);
+	$display_filename = "(stdin)";
     }
 
     if (!$opt_force) {
@@ -569,11 +571,12 @@ sub init_hashes {
 	$LEADIN . qr'jobs\s' =>  q<jobs>,
 #	$LEADIN . qr'jobs\s+-[^lp]\s' =>  q<'jobs' with option other than -l or -p>,
 	$LEADIN . qr'command\s+-[^p]\s' =>  q<'command' with option other than -p>,
+	$LEADIN . qr'setvar\s' =>  q<setvar 'foo' 'bar' should be eval \$'foo' 'bar'>,
     );
 
     %string_bashisms = (
 	qr'\$\[[^][]+\]' =>	         q<'$[' should be '$(('>,
-	qr'\$\{\w+\:\d+(?::\d+)?\}' =>   q<${foo:3[:1]}>,
+	qr'\$\{\w+\:(?:\d+|\$\{?\w+\}?)+(?::(?:\d+|\$\{?\w+\}?)+)?\}' =>   q<${foo:3[:1]}>,
 	qr'\$\{!\w+[\@*]\}' =>           q<${!prefix[*|@]>,
 	qr'\$\{!\w+\}' =>                q<${!name}>,
 	qr'\$\{\w+(/.+?){1,2}\}' =>      q<${parm/?/pat[/str]}>,
