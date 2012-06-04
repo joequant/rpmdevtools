@@ -155,7 +155,7 @@ my $default_ignore_regex = '
 $default_ignore_regex =~ s/^#.*$//mg;
 $default_ignore_regex =~ s/\n//sg;
 
-my $default_check_regex = '\.(c(c|pp|xx)?|h(h|pp|xx)?|f(77|90)?|p(l|m)|xs|sh|php|py|rb|java|vala|el|sc(i|e)|cs|pas|inc|dtd|xsl|mod|ml|mli)$';
+my $default_check_regex = '\.(c(c|pp|xx)?|h(h|pp|xx)?|f(77|90)?|p(l|m)|xs|sh|php|py(|x)|rb|java|vala|el|sc(i|e)|cs|pas|inc|dtd|xsl|mod|m|tex|mli?)$';
 
 my $modified_conf_msg;
 
@@ -388,11 +388,11 @@ sub parselicense($) {
     my $extrainfo = "";
     my $license = "";
 
-    if ($licensetext =~ /version ([^ ]+) (?:\(?only\)?.? )?(?:of the GNU (Affero )?General Public License )?as published by the Free Software Foundation/i or
-	$licensetext =~ /GNU (?:Affero )?General Public License as published by the Free Software Foundation; version ([^ ]+) /i) {
+    if ($licensetext =~ /version ([^ ]+) (?:\(?only\)?.? )?(?:of the GNU (Affero )?(Lesser |Library )?General Public License )?(as )?published by the Free Software Foundation/i or
+	$licensetext =~ /GNU (?:Affero )?(?:Lesser |Library )?General Public License (?:as )?published by the Free Software Foundation; version ([^ ]+) /i) {
 
 	$gplver = " (v$1)";
-    } elsif ($licensetext =~ /GNU (?:Affero ?)General Public License, version ([^ ]+?)[ .]/) {
+    } elsif ($licensetext =~ /GNU (?:Affero )?(?:Lesser |Library )?General Public License, version (\d+(?:\.\d+)?)[ \.]/) {
 	$gplver = " (v$1)";
     } elsif ($licensetext =~ /either version ([^ ]+)(?: of the License)?, or \(at your option\) any later version/) {
 	$gplver = " (v$1 or later)";
@@ -410,7 +410,7 @@ sub parselicense($) {
 	$license = "GENERATED FILE";
     }
 
-    if ($licensetext =~ /is free software.? you can redistribute it and\/or modify it under the terms of the (GNU (Library|Lesser) General Public License|LGPL)/i) {
+    if ($licensetext =~ /is (free software.? you can redistribute it and\/or modify it|licensed) under the terms of (version [^ ]+ of )?the (GNU (Library |Lesser )General Public License|LGPL)/i) {
 	$license = "LGPL$gplver$extrainfo $license";
     }
 
@@ -479,6 +479,10 @@ sub parselicense($) {
 
     if ($licensetext =~ /under the Apache License, Version ([^ ]+)/) {
 	$license = "Apache (v$1) $license";
+    }
+
+    if ($licensetext =~ /(THE BEER-WARE LICENSE)/i) {
+	$license = "Beerware $license";
     }
 
     if ($licensetext =~ /This source file is subject to version ([^ ]+) of the PHP license/) {
