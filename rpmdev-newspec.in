@@ -233,23 +233,23 @@ fi
 # If enabling more versions, remember to update bash completion too.
 if [[ $rpmver -ge 40400 ]] ; then # >= 4.4
     # filter %defattr(-,root,root(,-)) immediately after %files
-    specfilter="$specfilter
+    specfilter+="
     s/^(%files\\b[^\\n]*\\n)%defattr[ \\t]*\\([ \\t]*-[ \\t]*,[ \\t]*root[ \\t]*,[ \\t]*root([ \\t]*,[ \\t]*-[ \\t]*)?\\)[^\\n]*\\n/\\1/Mg
 "
 fi
 if [[ $rpmver -ge 40600 ]] ; then # >= 4.6
     # filter BuildRoot and Group tags
-    specfilter="$specfilter
+    specfilter+="
     s/^(BuildRoot|Group)[ \\t]*:[^\\n]*\\n//IMg
 "
 fi
 if [[ $rpmver -ge 40800 ]] ; then # >= 4.8
     # filter unnecessary basic %clean section, up to next section
-    specfilter="$specfilter
+    specfilter+="
     s|^%clean\\s*((/bin/)?rm\\|%\\{?__rm\\}?)[ \\t]+-[rRf]+[ \\t]+\\\$RPM_BUILD_ROOT\\s{2,}^%|%|Mg
 "
     # use %makeinstall instead of make install DESTDIR=...
-    specfilter="$specfilter
+    specfilter+="
     s|^make install DESTDIR=\\\$RPM_BUILD_ROOT|%make_install|Mg
 "
 fi
@@ -257,7 +257,7 @@ fi
 if [[ $NEWSPEC_PREFER_MACROS ]] ; then
     # This assumes templates are written using the shell style variables,
     # without surrounding curly braces.
-    specfilter="$specfilter
+    specfilter+="
     s/\\\$RPM_SOURCE_DIR\\b/%{_sourcedir}/g
     s/\\\$RPM_BUILD_DIR\\b/%{_builddir}/g
     s/\\\$RPM_OPT_FLAGS\\b/%{optflags}/g
