@@ -32,7 +32,7 @@ fi
 version()
 {
     cat <<EOF
-rpmdev-newspec version 2.1
+rpmdev-newspec version 2.2
 
 Copyright (c) Warren Togami <warren@togami.com>, Ville Skyttä
 <ville.skytta@iki.fi>
@@ -247,6 +247,10 @@ if [[ $rpmver -ge 40800 ]] ; then # >= 4.8
     # filter unnecessary basic %clean section, up to next section
     specfilter="$specfilter
     s|^%clean\\s*((/bin/)?rm\\|%\\{?__rm\\}?)[ \\t]+-[rRf]+[ \\t]+\\\$RPM_BUILD_ROOT\\s{2,}^%|%|Mg
+"
+    # use %makeinstall instead of make install DESTDIR=...
+    specfilter="$specfilter
+    s|^make install DESTDIR=\\\$RPM_BUILD_ROOT|%make_install|Mg
 "
 fi
 
