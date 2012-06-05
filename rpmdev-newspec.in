@@ -248,7 +248,7 @@ if [[ $rpmver -ge 40800 ]] ; then # >= 4.8
     specfilter+="
     s|^%clean\\s*((/bin/)?rm\\|%\\{?__rm\\}?)[ \\t]+-[rRf]+[ \\t]+\\\$RPM_BUILD_ROOT\\s{2,}^%|%|Mg
 "
-    # use %makeinstall instead of make install DESTDIR=...
+    # use %make_install instead of make install DESTDIR=...
     specfilter+="
     s|^make install DESTDIR=\\\$RPM_BUILD_ROOT|%make_install|Mg
 "
