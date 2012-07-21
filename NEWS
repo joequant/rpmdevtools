@@ -12,7 +12,7 @@ rpmdevtools x.x (201x-xx-xx)
   Pádraig Brady:
   - Use nproc for _smp_mflags in -setuptree if available.
 
-  Garret Holmstrom:
+  Garrett Holmstrom:
   - Fix licensecheck to not truncate other licenses on Public domain
     or WTFPL presence (#841043).
 
