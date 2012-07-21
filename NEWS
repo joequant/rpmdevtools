@@ -3,7 +3,7 @@ rpmdevtools x.x (201x-xx-xx)
   Ville Skyttä:
   - Make -bumpspec bump subpackage releases too (#789330).
   - Use %make_install for rpm >= 4.8 in -newspec (#828455).
-  - Sync with upstream devscripts 2.11.8.
+  - Sync with upstream devscripts 2.12.0+git.
   - Chop trailing comma off some licensecheck GPL version outputs.
 
   Richard W.M. Jones:
