@@ -16,6 +16,9 @@ rpmdevtools x.x (201x-xx-xx)
   - Fix licensecheck to not truncate other licenses on Public domain
     or WTFPL presence (#841043).
 
+  Jim Meyering:
+  - Prevent symlink attack in annotate-output (#853452, CVE-2012-3500).
+
 rpmdevtools 8.2 (2011-11-12)
 
   Ville Skyttä:
