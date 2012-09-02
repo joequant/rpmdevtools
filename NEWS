@@ -1,4 +1,4 @@
-rpmdevtools x.x (201x-xx-xx)
+rpmdevtools 8.3 (2012-09-02)
 
   Ville Skyttä:
   - Make -bumpspec bump subpackage releases too (#789330).
