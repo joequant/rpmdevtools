@@ -3,6 +3,9 @@ rpmdevtools x.x (201x-xx-xx)
   Ville Skyttä:
   - Sync with upstream devscripts 2.12.3+git.
 
+  Michael Schwendt:
+  - Make -bumpspec bump all values, recognized or via fallback (#789330).
+
 rpmdevtools 8.3 (2012-09-02)
 
   Ville Skyttä:

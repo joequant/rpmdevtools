@@ -54,7 +54,6 @@ class SpecFile:
         )
 
     def bumpRelease(self):
-        bumped = False
         for i in range(len(self.lines)):
             skipped = False
             for pattern in SpecFile._skip_patterns:
@@ -66,24 +65,20 @@ class SpecFile:
             for pattern in SpecFile._bump_patterns:
                 (self.lines[i], n) = \
                     pattern.subn(self.increase, self.lines[i], 1)
-                bumped = bumped or n
-        if bumped:
-            return
-
-        # Here, no line matched at all.
-        # Happens with macro-overloaded spec files e.g.
-        # Bump ^Release: ... line least-significant.
-        for i in range(len(self.lines)):
-            if self.lines[i].startswith('Release:'):
-                old = self.lines[i][len('Release:'):].rstrip()
-                new = self.increaseFallback(old)
-                if self.verbose:
-                    self.debugdiff(old, new)
-                if old != new:
-                    self.lines[i] = self.lines[i].replace(old, new)
-                    bumped = True
-        if bumped:
-            return
+                if n:
+                    break
+            else:
+                # Here, no line matched at all.
+                # Happens with macro-overloaded spec files e.g.
+                # Bump ^Release: ... line least-significant.
+                if self.lines[i].startswith('Release:'):
+                    old = self.lines[i][len('Release:'):].rstrip()
+                    new = self.increaseFallback(old)
+                    if self.verbose:
+                        self.debugdiff(old, new)
+                    if old != new:
+                        self.lines[i] = self.lines[i].replace(old, new)
+                        continue
 
         if self.verbose:
             sys.stderr.write('ERROR: No release value matched: %s\n' %
