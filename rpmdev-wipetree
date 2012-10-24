@@ -30,6 +30,15 @@ if [ $(id -u) -eq 0 ]; then
     exit 255
 fi
 
+if [ $# -gt 0 ]; then
+    echo "rpmdev-wipetree erases all files within the rpm build dir"
+    echo
+    echo "Usage: rpmdev-wipetree"
+    rc=1
+    [ "$1" = "-h" -o "$1" = "--help" ] && rc=0
+    exit $rc
+fi
+
 # Wipe RPM Build Directory clean
 echo "Removing all build files..."
 rm -rf $(rpm --eval "%{_builddir}")/*
