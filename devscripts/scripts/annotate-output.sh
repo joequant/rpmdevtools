@@ -24,9 +24,12 @@ progname=$(basename $0)
 
 addtime ()
 {
-	while read line; do
+	while IFS= read -r line; do
 		echo "`date ${FMT}` $1: $line"
 	done
+	if [ ! -z "$line" ]; then
+		echo -n "`date ${FMT}` $1: $line"
+	fi
 }
 
 usage ()
