@@ -58,7 +58,7 @@ Usage: $progname [-h] [-v] [-q] [-c] [-e | -l] [-p | -np | -P | -nP | -r]
   Default options: -e -l -p -np -P -nP -r -t
 
 EOF
-    exit -1
+    exit ${1:--1}
 }
 
 opt() {
@@ -277,7 +277,7 @@ while [ $OPTIND -le $# ]; do
     eval pkg=\${$OPTIND}
 
     if [ ${pkg:0:1} = "-" ]; then
-	[ "$pkg" = "-h" -o "$pkg" = "--help" ] && usage
+	[ "$pkg" = "-h" -o "$pkg" = "--help" ] && usage 0
 	[ "$pkg" = "-v" -o "$pkg" = "--verbose" ] && verbose=1
 	[ "$pkg" = "-q" -o "$pkg" = "--quiet" ] && quiet=1
 	[ "$pkg" = "-qq" ] && quiet=2
