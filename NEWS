@@ -1,7 +1,7 @@
 rpmdevtools x.x (201x-xx-xx)
 
   Ville Skyttä:
-  - Sync with upstream devscripts 2.13.2+git.
+  - Sync with upstream devscripts 2.13.2+git (#21).
   - Do not erase any files with -wipetree if given an argument.
   - Exit with zero exit status from rpminfo -h/--help (#949976).
   - Support 7z in -extract with 7z in addition to 7za.
