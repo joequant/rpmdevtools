@@ -6,6 +6,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Exit with zero exit status from rpminfo -h/--help (#949976).
   - Support 7z in -extract with 7z in addition to 7za.
   - Output template %changelog entry from -newspec (#980897).
+  - Support non-lowercase %changelog in -bumpspec.
 
   Michael Schwendt:
   - Make -bumpspec bump all values, recognized or via fallback (#789330).
