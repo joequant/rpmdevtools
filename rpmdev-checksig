@@ -49,9 +49,9 @@ def lookupKeyID(ts, keyid):
         return email
 
 def checkSig(ts, package):
-    """ take a package, check it's sigs, return 0 if they are all fine, return 
-    103 if the gpg key can't be found, 104 if the key is not trusted,100 if the 
-    header is in someway damaged"""
+    """take a package, check its sigs, return 0 if they are all fine, return
+    103 if the gpg key can't be found, 104 if the key is not trusted,
+    100 if the header is in someway damaged"""
     try:
         fdno = os.open(package, os.O_RDONLY)
     except OSError, e:
