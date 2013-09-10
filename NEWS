@@ -8,6 +8,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Output template %changelog entry from -newspec (#980897).
   - Support non-lowercase %changelog in -bumpspec.
   - Make -checksig, -sort, and -vercmp work with Python 3.
+  - Make -rmdevelrpms closer to work with Python 3.
 
   Michael Schwendt:
   - Make -bumpspec bump all values, recognized or via fallback (#789330).

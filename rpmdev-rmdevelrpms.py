@@ -3,7 +3,7 @@
 
 # rpmdev-rmdevelrpms -- Find (and optionally remove) "development" RPMs
 #
-# Copyright (c) 2004-2009 Ville Skyttä <ville.skytta@iki.fi>
+# Copyright (c) 2004-2013 Ville Skyttä <ville.skytta@iki.fi>
 # Credits: Seth Vidal (yum), Thomas Vander Stichele (mach)
 #
 # This program is free software; you can redistribute it and/or modify
@@ -30,8 +30,13 @@ import types
 
 import rpm
 
+try:
+    input = raw_input
+except NameError:
+    pass
 
-__version__ = "1.13"
+
+__version__ = "1.14"
 
 
 dev_re  = re.compile("-(?:de(?:buginfo|vel)|sdk|static)\\b", re.IGNORECASE)
@@ -73,6 +78,7 @@ def isDevelPkg(hdr):
     if not hdr: return 0
     name = hdr[rpm.RPMTAG_NAME]
     if not name: return 0
+    name = str(name)
     na = "%s.%s" % (name, hdr[rpm.RPMTAG_ARCH])
     # Check nondevpkgs first (exclusion overrides inclusion)
     if name in nondevpkgs or na in nondevpkgs: return 0
@@ -186,6 +192,7 @@ def main():
 
     try:
         if len(hdrs) > 0:
+            # TODO py3: unorderable types: rpm.hdr() < rpm.hdr() (from x)
             hdrs.sort(key =
                       lambda x: (x[rpm.RPMTAG_NAME], x, x[rpm.RPMTAG_ARCH]))
             indent = ""
@@ -223,7 +230,7 @@ def main():
                     print ("Not removed due to dependencies.")
                 elif os.geteuid() == 0:
                     if not opts.yes:
-                        proceed = raw_input("Remove them? [y/N] ")
+                        proceed = input("Remove them? [y/N] ")
                     else:
                         proceed = "y"
                     if (proceed in ("Y", "y")):
@@ -250,11 +257,11 @@ for conf in ("__SYSCONFDIR__/rpmdevtools/rmdevelrpms.conf",
              os.path.join(os.environ["HOME"],
                           ".config/rpmdevtools/rmdevelrpms.conf")):
     try:
-        execfile(conf)
+        exec(compile(open(conf).read(), conf, "exec"))
     except IOError:
         pass
-    if type(devpkgs) == types.StringType:
+    if hasattr(devpkgs, "split"):
         devpkgs = devpkgs.split()
-    if type(nondevpkgs) == types.StringType:
+    if hasattr(nondevpkgs, "split"):
         nondevpkgs = nondevpkgs.split()
 main()
