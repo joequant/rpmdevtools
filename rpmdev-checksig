@@ -61,7 +61,8 @@ def checkSig(ts, package):
     os.dup2(null, 2)
     try:
         ts.hdrFromFdno(fdno)
-    except rpm.error, e:
+    except rpm.error:
+        e = sys.exc_info()[1]
         if str(e) in ("public key not available", "public key not availaiable"):
             error = 103
         elif str(e) == "public key not trusted":

@@ -23,6 +23,11 @@ import sys
 
 import rpm
 
+try:
+    input = raw_input
+except NameError:
+    pass
+
 
 def usage():
     print ("""
@@ -35,7 +40,7 @@ is newer.  Other exit statuses indicate problems.
 """)
 
 def askforstuff(thingname):
-    thing = raw_input('%8s: ' % thingname)
+    thing = input('%8s: ' % thingname)
     return thing
 
 # from yum and rpmlint, with less internal assumptions, and returning

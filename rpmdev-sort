@@ -4,7 +4,7 @@
 # rpmdev-sort -- sort rpms from standard input
 #
 # Copyright (c) 2010 Dan Horak
-#               2010 Ville Skyttä
+#               2010-2013 Ville Skyttä
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,16 +60,30 @@ def parse_nevr(s):
 
     return ("-".join(ss), e, v, r)
 
-def rpm_compare(a, b):
-    (an, ae, av, ar) = parse_nevr(a)
-    (bn, be, bv, br) = parse_nevr(b)
+class NevrLine:
+    line = None
+    n = None
+    e = None
+    v = None
+    r = None
 
-    if an > bn:
-        return 1
-    elif an < bn:
-        return -1
-    else:
-        return rpm.labelCompare((ae, av, ar), (be, bv, br))
+    def __init__(self, line):
+        self.line = line
+        self.n, self.e, self.v, self.r = parse_nevr(line)
+
+    def __cmp__(self, other):
+        if self.n > other.n:
+            return 1
+        elif self.n < other.n:
+            return -1
+        return rpm.labelCompare((self.e, self.v, self.r),
+                                (other.e, other.v, other.r))
+
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __repr__(self):
+        return self.line
 
 def main():
     if len(sys.argv) > 1 and \
@@ -84,10 +98,10 @@ def main():
             break
         line = line.strip()
         if len(line) and not line.startswith("#"):
-            lines.append(line)
-    lines.sort(rpm_compare)
+            lines.append(NevrLine(line))
+    lines.sort()
     for line in lines:
-        print line
+        print(line)
 
 if __name__ == "__main__":
     main()
