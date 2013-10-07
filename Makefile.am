@@ -1,4 +1,4 @@
-SUBDIRS = devscripts emacs qa-robot
+SUBDIRS = emacs qa-robot
 
 pkgsysconfdir = $(sysconfdir)/rpmdevtools
 bashcompdir = $(sysconfdir)/bash_completion.d
