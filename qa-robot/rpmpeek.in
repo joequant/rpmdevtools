@@ -1,8 +1,11 @@
 #!/bin/sh -ef
 export LC_ALL=C
 
-while getopts h opt; do
+fakeroot_save='fakeroot -s .fakedata --'
+fakeroot_load='fakeroot -i .fakedata --'
+while getopts hn opt; do
 	case "$opt" in
+		n) fakeroot_save= fakeroot_load= ;;
 		h) pod2usage --exit=0 "$0"; exit 0 ;;
 		*) pod2usage --exit=2 "$0"; exit 2 ;;
 	esac
@@ -16,12 +19,15 @@ fi
 
 # rpmdevtools change: tmpdir.sh location
 . __PKGDATADIR__/tmpdir.sh
-rpm2cpio "$1" |(cd "$TMPDIR"; fakeroot -s .fakedata -- \
-	cpio -idmu --quiet --no-absolute-filenames) || exit 2
+rpm2cpio "$1" |
+	(cd "$TMPDIR";
+	 $fakeroot_save cpio -idmu --quiet --no-absolute-filenames;
+	 ${fakeroot_save:-chmod -Rf u+rwX .}
+	) || exit 2
 shift
 cd "$TMPDIR"
 export RPM_BUILD_ROOT="$TMPDIR"
-fakeroot -i .fakedata -- "$@"
+$fakeroot_load "$@"
 
 : <<'__EOF__'
 
@@ -31,13 +37,27 @@ rpmpeek - execute command within RPM contents
 
 =head1	SYNOPSIS
 
-B<rpmpeek> [B<-h>] I<RPM> I<command> [I<args>...]
+B<rpmpeek> [B<-n>] [B<-h>] I<RPM> I<command> [I<args>...]
 
 =head1	DESCRIPTION
 
 B<rpmpeek> unpacks I<RPM> contents into a temporary directory and
 executes a I<command> under that directory.  The directory is purged
 upon exit.
+
+=head1  OPTIONS
+
+=over
+
+=item   B<-n>
+
+Do not preserve attributes of unpacked files.
+
+=item   B<-h>
+
+Display the usage and exit.
+
+=back
 
 =head1	AUTHOR
 
@@ -55,7 +75,7 @@ either version 2 of the License, or (at your option) any later version.
 
 rpm(8),
 rpm2cpio(8),
-fakeroot(1)
+fakeroot(1).
 
 =cut
 

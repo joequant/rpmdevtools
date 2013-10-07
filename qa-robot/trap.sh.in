@@ -17,15 +17,15 @@ remove_trap()
 
 trap_atexit()
 {
-	local t_rc=$?
-	trap - EXIT
+	local t_rc=$1; shift
 	eval "$__exit_traps"
 	exit $t_rc
 }
 
 if [ -z "$__exit_traps" ]; then
 	__exit_traps=:
-	trap trap_atexit EXIT HUP INT QUIT PIPE TERM
+	trap 'trap_atexit $?' EXIT
+	trap 'exit 143' HUP INT QUIT PIPE TERM
 fi
 
 : <<'__EOF__'

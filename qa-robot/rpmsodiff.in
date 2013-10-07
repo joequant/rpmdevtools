@@ -42,8 +42,8 @@ if [ -s so3 ];	then	echo "	common sonames:"; cat so3; echo;
 
 rpmelfsym "$1" >sym1; sort -u sym1 -o sym1
 rpmelfsym "$2" >sym2; sort -u sym2 -o sym2
-cut -f1,2 so3 |sort -t$'\t' -u -k2 |join -t$'\t' -12 -21 -o '1.1 2.2 2.3' - sym1 |awk -F'\t' '$2~/[DTW]/' |sort -u >def1
-cut -f1,3 so3 |sort -t$'\t' -u -k2 |join -t$'\t' -12 -21 -o '1.1 2.2 2.3' - sym2 |awk -F'\t' '$2~/[DTW]/' |sort -u >def2
+cut -f1,2 so3 |sort -t$'\t' -u -k2 |join -t$'\t' -12 -21 -o '1.1 2.2 2.3' - sym1 |awk -F'\t' '$2~/[DRTuW]/' |sort -u >def1
+cut -f1,3 so3 |sort -t$'\t' -u -k2 |join -t$'\t' -12 -21 -o '1.1 2.2 2.3' - sym2 |awk -F'\t' '$2~/[DRTuW]/' |sort -u >def2
 mkdir "$bb1" "$bb2"
 cut -f1 so3 |sort -u |while read -r soname; do
 	echo "$soname" |join -t$'\t' -o '2.3 2.2' - def1 |sort -u >"$bb1/$soname"; touch -r "$1" "$bb1/$soname"

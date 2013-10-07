@@ -1,10 +1,12 @@
 #!/bin/sh -ef
 export LC_ALL=C
 
+rpmargs_all=
 rpmargs_cmd=
 rpmargs_pkg=
-while getopts c:ph rpmargs_opt; do
+while getopts ac:ph rpmargs_opt; do
 	case "$rpmargs_opt" in
+		a) rpmargs_all=1 ;;
 		c) rpmargs_cmd="${OPTARG:?}"
 			readonly rpmargs_cmd ;;
 		p) rpmargs_pkg=1 ;;
@@ -17,6 +19,16 @@ shift "$((OPTIND-1))"; OPTIND=1
 if [ -z "$rpmargs_cmd" ]; then
 	echo "${0##*/}: command not specified" >&2
 	pod2usage --exit=2 "$0"; exit 2
+fi
+
+if [ -n "$*" -a -n "$rpmargs_all" ]; then
+	echo "${0##*/}: too may arguments" >&2
+	pod2usage --exit=2 "$0"; exit 2
+fi
+
+if [ -n "$rpmargs_all" ]; then
+	: ${sisyphus:=/ALT/Sisyphus}
+	set -- "$sisyphus"/files/{{i586,noarch}/RPMS,SRPMS}
 fi
 
 if [ -z "$*" ]; then
@@ -76,7 +88,7 @@ rpmargs - process RPM packages
 B<rpmargs>
 [B<-h>]
 B<-c> I<command>
-[B<-p>]
+[B<-a>] [B<-p>]
 [I<FILE>...] [I<DIR>...]
 
 =head1	DESCRIPTION
@@ -89,6 +101,10 @@ pattern, and RPM file basename is prepended to the I<command> output.
 =head1	OPTIONS
 
 =over
+
+=item	B<-a>
+
+Process all Sisyphus packages.
 
 =item	B<-p>
 
