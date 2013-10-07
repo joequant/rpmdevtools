@@ -1,4 +1,4 @@
-rpmdevtools x.x (201x-xx-xx)
+rpmdevtools 8.4 (2013-10-07)
 
   Ville Skyttä:
   - Drop bundled devscripts, they're packaged separately now (#920163).
