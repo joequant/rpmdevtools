@@ -3,12 +3,14 @@ export LC_ALL=C
 
 rpmsoname()
 {
+	# rpmdevtools change: add --nodigest, --nosignature
 	rpm -qp --qf '[%{PROVIDES}\n]' --nodigest --nosignature "$1" >prov || return
 	grep -oE '^lib[^/()]+[.]so\>[^/()]*' prov >sonames || return 0
 
 	# Files map to themselves; symbolic links cause a headache.
 	# Sample file entry:	perl5.8.7	/usr/bin/perl5.8.7
 	# Sample link entry:	libperl.so.5.8	/usr/lib/libperl.so.5.8	libperl.so.5.8.7
+	# rpmdevtools change: add --nodigest, --nosignature
 	rpm -qp --qf '[%{BASENAMES}\t%{FILENAMES}\t%{FILELINKTOS}\n]' --nodigest --nosignature "$1" >list
 	awk -F'\t' '$NF==""{print$1"\t"$2}$NF{print>"/dev/fd/3"}' list >files 3>links
 
@@ -59,6 +61,7 @@ rpmsoname()
 	fi >&2
 }
 
+# rpmdevtools change: don't use cmdcache
 . rpmargs -c rpmsoname "$@"
 
 : <<'__EOF__'

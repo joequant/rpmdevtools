@@ -48,6 +48,7 @@ rpmargs_packages()
 	done <rpmargs_packages
 }
 
+# rpmdevtools change: tmpdir.sh location
 . __PKGDATADIR__/tmpdir.sh
 rpmargs_tmpdir=$TMPDIR
 

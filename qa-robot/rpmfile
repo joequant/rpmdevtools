@@ -3,6 +3,7 @@ export LC_ALL=C
 
 rpmfile()
 {
+	# rpmdevtools change: add --nodigest --nosignature
 	rpm -qp --qf '[%{FILENAMES}\t%{FILEMODES:octal}\n]' \
 		--nodigest --nosignature "$1" >files
 	[ -s files ] || return 0
@@ -11,6 +12,7 @@ rpmfile()
 	paste files types
 }
 
+# rpmdevtools change: don't use cmdcache
 . rpmargs -c rpmfile "$@"
 
 : <<'__EOF__'

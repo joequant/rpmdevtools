@@ -25,6 +25,7 @@ b1="${1##*/}"; bb1="${b1%.*.rpm}"
 b2="${2##*/}"; bb2="${b2%.*.rpm}"
 [ "$bb1" != "$bb2" ] || bb2="$bb2+"
 
+# rpmdevtools change: tmpdir.sh location
 . __PKGDATADIR__/tmpdir.sh
 cd "$TMPDIR"
 
