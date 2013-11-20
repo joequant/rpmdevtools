@@ -12,7 +12,7 @@ man1_MANS = rpmdev-diff.1 rpmdev-extract.1 rpmdev-bumpspec.1 rpmdev-newinit.1 \
 	rpmdev-newspec.1 rpmdev-packager.1 spectool.1
 man8_MANS = rpmdev-rmdevelrpms.8
 
-dist_pkgsysconf_DATA = newspec.conf rmdevelrpms.conf \
+dist_pkgsysconf_DATA = curlrc newspec.conf rmdevelrpms.conf \
 	spectemplate-lib.spec spectemplate-minimal.spec \
 	spectemplate-perl.spec spectemplate-php-pear.spec \
 	spectemplate-python.spec spectemplate-ruby.spec \
