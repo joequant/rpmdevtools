@@ -44,16 +44,25 @@ class SpecFile:
             f and f.close()
 
     _bump_patterns = (
-        re.compile(r"^Release\s*:\s*(\d+.*)", re.I),
-        re.compile(r"^%(?:define|global)\s+(?i)release\s+(\d+.*)"),
-        re.compile(r"^Release\s*:\s+%release_func\s+(\d+.*)", re.I),
-        re.compile(r"^%(?:define|global)\s+(?i)baserelease\s+(\d+.*)"),
+        # tuples: (pattern id, regex)
+        ("tag", re.compile(r"^Release\s*:\s*(\d+.*)", re.I)),
+        ("release-macro", re.compile(r"^%(?:define|global)\s+(?i)release\s+(\d+.*)")),
+        ("tag-release_func", re.compile(r"^Release\s*:\s+%release_func\s+(\d+.*)", re.I)),
+        ("baserelease-macro", re.compile(r"^%(?:define|global)\s+(?i)baserelease\s+(\d+.*)")),
         )
+    _macro_patterns = {
+        # map: pattern id -> regex
+        "release-macro" : re.compile(r"%.*release}", re.I),
+        "baserelease-macro" : re.compile(r"%.*baserelease}", re.I),
+        }
     _skip_patterns = (
         re.compile(r"\$Revision:"),
         )
 
     def bumpRelease(self):
+        # remember recognized patterns we've used to bump something
+        whatwasbumped = []
+
         for i in range(len(self.lines)):
             skipped = False
             for pattern in SpecFile._skip_patterns:
@@ -62,10 +71,12 @@ class SpecFile:
                     break
             if skipped:
                 continue
-            for pattern in SpecFile._bump_patterns:
+            for (patid, pattern) in SpecFile._bump_patterns:
                 (self.lines[i], n) = \
                     pattern.subn(self.increase, self.lines[i], 1)
-                if n:
+                if n:  # this pattern has lead to a change
+                    if patid not in whatwasbumped:
+                        whatwasbumped.append(patid)
                     break
             else:
                 # Here, no line matched at all.
@@ -73,6 +84,15 @@ class SpecFile:
                 # Bump ^Release: ... line least-significant.
                 if self.lines[i].startswith('Release:'):
                     old = self.lines[i][len('Release:'):].rstrip()
+                    # See whether this "Release" tag line has been bumped
+                    # via a macro definition already
+                    skipped = False
+                    for patid in whatwasbumped:
+                        if SpecFile._macro_patterns[patid].search(old):
+                            skipped = True  # Release tag bumped via macro
+                            break
+                    if skipped:
+                        continue
                     new = self.increaseFallback(old)
                     if self.verbose:
                         self.debugdiff(old, new)
