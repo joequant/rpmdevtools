@@ -2,6 +2,7 @@ rpmdevtools x.x (201x-xx-xx)
 
   Ville Skyttä:
   - Install default curlrc, add --insecure to it.
+  - Support case insensitive Release tag in -bumpspec fallback.
 
   Michael Schwendt:
   - Avoid some superfluous bumps in -bumpspec (#789330).
