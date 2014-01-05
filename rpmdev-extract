@@ -3,7 +3,7 @@
 
 # rpmdev-extract -- Extract various archives in "tar xvf" style
 #
-# Copyright (c) 2004-2011 Ville Skyttä <ville.skytta@iki.fi>
+# Copyright (c) 2004-2014 Ville Skyttä <ville.skytta@iki.fi>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@ shopt -s extglob
 version()
 {
     cat <<EOF
-rpmdev-extract version 1.11
+rpmdev-extract version 1.12
 
-Copyright (c) 2004-2013 Ville Skyttä <ville.skytta@iki.fi>
+Copyright (c) 2004-2014 Ville Skyttä <ville.skytta@iki.fi>
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -99,6 +99,8 @@ fmime()
             decomp="lzip -dc" ;;
         application/x-lrzip)
             decomp="lrzip -dqo-" ;;
+        application/x-lz4)
+            decomp="lz4 -dc" ;;
     esac
 }
 
@@ -145,6 +147,8 @@ ftype()
                 *.lz)                 decomp="lzip -dc" ;;
                 # lrzip support added in file > 5.05
                 *.lrz)                decomp="lrzip -dqo-" ;;
+                # lz4 support added in file > 5.16 (?)
+                *.lz4)                decomp="lz4 -dc" ;;
             esac
         fi
         if [[ -n $decomp ]] ; then
