@@ -50,18 +50,11 @@ class SpecFile:
         ("tag-release_func", re.compile(r"^Release\s*:\s+%release_func\s+(\d+.*)", re.I)),
         ("baserelease-macro", re.compile(r"^%(?:define|global)\s+(?i)baserelease\s+(\d+.*)")),
         )
-    _macro_patterns = {
-        # map: pattern id -> regex
-        "release-macro" : re.compile(r"%.*release}", re.I),
-        "baserelease-macro" : re.compile(r"%.*baserelease}", re.I),
-        }
     _skip_patterns = (
         re.compile(r"\$Revision:"),
         )
 
     def bumpRelease(self):
-        # remember recognized patterns we've used to bump something
-        whatwasbumped = []
         # count how many times/lines we've bumped
         bumped = 0
 
@@ -77,8 +70,6 @@ class SpecFile:
                 (self.lines[i], n) = \
                     pattern.subn(self.increase, self.lines[i], 1)
                 if n:  # this pattern has lead to a change
-                    if patid not in whatwasbumped:
-                        whatwasbumped.append(patid)
                     bumped += 1
                     break
             else:
@@ -87,15 +78,6 @@ class SpecFile:
                 # Bump ^Release: ... line least-significant.
                 if self.lines[i].lower().startswith('release:'):
                     old = self.lines[i][len('Release:'):].rstrip()
-                    # See whether this "Release" tag line has been bumped
-                    # via a macro definition already
-                    skipped = False
-                    for patid in whatwasbumped:
-                        if SpecFile._macro_patterns[patid].search(old):
-                            skipped = True  # Release tag bumped via macro
-                            break
-                    if skipped:
-                        continue
                     new = self.increaseFallback(old)
                     if self.verbose:
                         self.debugdiff(old, new)
