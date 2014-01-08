@@ -155,6 +155,9 @@ class SpecFile:
 
         relmatch = SpecFile._jpp_pattern.search(release)
         if not relmatch:  # pattern match failed
+            sys.stderr.write(
+                'WARNING: Bad Fedora jpackage release versioning scheme: %s\n' %
+                self.filename)
             raise BumpSpecError
 
         prefix = relmatch.group('prefix')
