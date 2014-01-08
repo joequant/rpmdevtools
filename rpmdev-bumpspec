@@ -62,6 +62,8 @@ class SpecFile:
     def bumpRelease(self):
         # remember recognized patterns we've used to bump something
         whatwasbumped = []
+        # count how many times/lines we've bumped
+        bumped = 0
 
         for i in range(len(self.lines)):
             skipped = False
@@ -77,6 +79,7 @@ class SpecFile:
                 if n:  # this pattern has lead to a change
                     if patid not in whatwasbumped:
                         whatwasbumped.append(patid)
+                    bumped += 1
                     break
             else:
                 # Here, no line matched at all.
@@ -98,12 +101,15 @@ class SpecFile:
                         self.debugdiff(old, new)
                     if old != new:
                         self.lines[i] = self.lines[i].replace(old, new)
+                        bumped += 1
                         continue
 
+        if bumped:
+            return
         if self.verbose:
             sys.stderr.write('ERROR: No release value matched: %s\n' %
                              self.filename)
-            sys.exit(1)
+        sys.exit(1)
 
     _changelog_pattern = re.compile(r"^%changelog(\s|$)", re.I)
 
