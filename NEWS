@@ -4,6 +4,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Install default curlrc, add --insecure to it.
   - Support case insensitive Release tag in -bumpspec fallback.
   - Add LZ4 support to -extract.
+  - Sync with qa-robot upstream 0.3.6-alt1 (#1004450).
 
   Michael Schwendt:
   - Avoid some superfluous bumps in -bumpspec (#789330).
