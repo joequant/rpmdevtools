@@ -1,4 +1,4 @@
-#!/usr/bin/python3 -tt
+#!/usr/bin/python -tt
 # -*- coding: utf-8 -*-
 
 # rpmdev-rmdevelrpms -- Find (and optionally remove) "development" RPMs
@@ -28,6 +28,11 @@ import stat
 import sys
 
 import rpm
+
+try:
+    input = raw_input
+except NameError:
+    pass
 
 
 __version__ = "1.15"
