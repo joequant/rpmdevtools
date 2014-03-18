@@ -1,7 +1,7 @@
 #!/usr/bin/python -t
 # -*- mode: Python; indent-tabs-mode: nil; coding: utf-8 -*-
 #
-# Copyright (c) 2005-2013 Fedora Project
+# Copyright (c) 2005-2014 Fedora Project
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import time
 from optparse import OptionParser
 
 
-__version__ = "1.0.12"
+__version__ = "1.0.13"
 
 
 class BumpSpecError(Exception):
@@ -114,6 +114,20 @@ class SpecFile:
             sys.stderr.write('ERROR: No release value matched: %s\n' %
                              self.filename)
         sys.exit(1)
+
+    def newVersion(self, vr):
+        rpos = vr.find('-')
+        if rpos>=0:  # set custom Release value
+            r = vr[rpos+1:]
+            v = vr[:rpos]
+        else:
+            r = "1%{?dist}"
+            v = vr
+        for i in range(len(self.lines)):
+            if self.lines[i].lower().startswith('version:'):
+                self.lines[i] = re.sub(r'[^: \t]*$', v, self.lines[i].rstrip()) + '\n'
+            if self.lines[i].lower().startswith('release:'):
+                self.lines[i] = 'Release: ' + r + '\n'
 
     _changelog_pattern = re.compile(r"^%changelog(\s|$)", re.I)
 
@@ -226,7 +240,7 @@ rpmdev-bumpspec bumps release tags in specfiles.'''
 
     version = '''rpmdev-bumpspec version %s
 
-Copyright (c) 2005-2013 Fedora Project
+Copyright (c) 2005-2014 Fedora Project
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -237,7 +251,7 @@ the Free Software Foundation; either version 2 of the License, or
     userstring = userstring.strip() or None
 
     parser = OptionParser(usage=usage)
-    parser.add_option("-c", "--comment", default='- rebuilt',
+    parser.add_option("-c", "--comment",
                       help="changelog comment (default: \"- rebuilt\")")
     parser.add_option("-u", "--userstring", default=userstring,
                       help="user name+email string (default: output from "
@@ -248,6 +262,8 @@ the Free Software Foundation; either version 2 of the License, or
     parser.add_option("-s", "--string", default=None,
                       help="bump trailing .STRING<DIGIT> component if found, "
                       "append .STRING1 if not; trumps -r")
+    parser.add_option("-n", "--new",
+                      help="set new version and reset/set release (simple spec files only)")
     parser.add_option("-V", "--verbose", default=False, action='store_true',
                       help="more output")
     parser.add_option("-v", "--version", default=False, action='store_true',
@@ -263,6 +279,9 @@ the Free Software Foundation; either version 2 of the License, or
 
     if not opts.userstring:
         parser.error('Userstring required, see option -u')
+
+    if not opts.comment: 
+        opts.comment = '- new version' if opts.new else '- rebuilt' 
 
     # Grab bullet, insert one if not found.
     bullet_re = re.compile(r'^([^\s\w])\s', re.UNICODE)
@@ -292,7 +311,10 @@ the Free Software Foundation; either version 2 of the License, or
         except:
             # Not actually a parser error, but... meh.
             parser.error(sys.exc_info()[1])
-        s.bumpRelease()
+        if opts.new: 
+            s.newVersion(opts.new) 
+        else: 
+            s.bumpRelease() 
         s.writeFile(aspec)
 
         # Get EVR for changelog entry.
