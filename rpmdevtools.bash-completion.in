@@ -92,6 +92,11 @@ _rpmdev_bumpspec()
                                    --verbose --version' -- "$cur" ) )
     else
         _filedir spec
+        if [[ $cur != .* ]]; then
+            for i in ${!COMPREPLY[@]}; do
+                [[ ${COMPREPLY[i]} == .@(git|svn) ]] && unset COMPREPLY[i]
+            done
+        fi
     fi
 } &&
 complete -F _rpmdev_bumpspec -o filenames rpmdev-bumpspec
