@@ -1,9 +1,9 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python3 -tt
 # -*- coding: utf-8 -*-
 
 # rpmdev-rmdevelrpms -- Find (and optionally remove) "development" RPMs
 #
-# Copyright (c) 2004-2013 Ville Skyttä <ville.skytta@iki.fi>
+# Copyright (c) 2004-2014 Ville Skyttä <ville.skytta@iki.fi>
 # Credits: Seth Vidal (yum), Thomas Vander Stichele (mach)
 #
 # This program is free software; you can redistribute it and/or modify
@@ -29,21 +29,16 @@ import sys
 
 import rpm
 
-try:
-    input = raw_input
-except NameError:
-    pass
 
-
-__version__ = "1.14"
+__version__ = "1.15"
 
 
 dev_re  = re.compile("-(?:de(?:buginfo|vel)|sdk|static)\\b", re.IGNORECASE)
 test_re = re.compile("^perl-(?:Devel|ExtUtils|Test)-")
 lib_re1 = re.compile("^lib.+")
 lib_re2 = re.compile("-libs?$")
-a_re    = re.compile("\\w\\.a$")
-so_re   = re.compile("\\w\\.so(?:\\.\\d+)*$")
+a_re    = re.compile(b"\\w\\.a$")
+so_re   = re.compile(b"\\w\\.so(?:\\.\\d+)*$")
 comp_re = re.compile("^compat-gcc")
 # required by Ant, which is required by Eclipse...
 jdev_re = re.compile("^java-.+-gcj-compat-devel$")
@@ -69,6 +64,13 @@ devpkgs = ()
 nondevpkgs = ()
 qf = '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}'
 
+
+# http://rpm.org/ticket/869
+class myhdr(rpm.hdr):
+    def __lt__(self, other):
+        return rpm.versionCompare(self, other) < 0
+
+
 def isDevelPkg(hdr):
     """
     Decides whether a package is a devel one, based on name, configuration
@@ -77,8 +79,8 @@ def isDevelPkg(hdr):
     if not hdr: return 0
     name = hdr[rpm.RPMTAG_NAME]
     if not name: return 0
-    name = str(name)
-    na = "%s.%s" % (name, hdr[rpm.RPMTAG_ARCH])
+    name = hdr.format("%{NAME}")
+    na = hdr.format("%{NAME}.%{ARCH}")
     # Check nondevpkgs first (exclusion overrides inclusion)
     if name in nondevpkgs or na in nondevpkgs: return 0
     if name in devpkgs or na in devpkgs: return 1
@@ -152,7 +154,7 @@ Report bugs to <http://bugzilla.redhat.com/>.'''
 def version():
     print ("rpmdev-rmdevelrpms version %s" % __version__)
     print ('''
-Copyright (c) 2004-2009 Ville Skyttä <ville.skytta@iki.fi>
+Copyright (c) 2004-2014 Ville Skyttä <ville.skytta@iki.fi>
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -185,13 +187,12 @@ def main():
     hdrs = []
     for hdr in mi:
         if isDevelPkg(hdr):
-            hdrs.append(hdr)
+            hdrs.append(myhdr(hdr))
             ts.addErase(mi.instance())
     ts.order()
 
     try:
         if len(hdrs) > 0:
-            # TODO py3: unorderable types: rpm.hdr() < rpm.hdr() (from x)
             hdrs.sort(key =
                       lambda x: (x[rpm.RPMTAG_NAME], x, x[rpm.RPMTAG_ARCH]))
             indent = ""
