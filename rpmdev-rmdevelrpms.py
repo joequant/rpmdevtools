@@ -33,31 +33,31 @@ import rpm
 __version__ = "1.15"
 
 
-dev_re  = re.compile("-(?:de(?:buginfo|vel)|sdk|static)\\b", re.IGNORECASE)
+dev_re = re.compile("-(?:de(?:buginfo|vel)|sdk|static)\\b", re.IGNORECASE)
 test_re = re.compile("^perl-(?:Devel|ExtUtils|Test)-")
 lib_re1 = re.compile("^lib.+")
 lib_re2 = re.compile("-libs?$")
-a_re    = re.compile(b"\\w\\.a$")
-so_re   = re.compile(b"\\w\\.so(?:\\.\\d+)*$")
+a_re = re.compile(b"\\w\\.a$")
+so_re = re.compile(b"\\w\\.so(?:\\.\\d+)*$")
 comp_re = re.compile("^compat-gcc")
 # required by Ant, which is required by Eclipse...
 jdev_re = re.compile("^java-.+-gcj-compat-devel$")
 
 
-def_devpkgs =\
-("autoconf", "autoconf213", "automake", "automake14", "automake15",
- "automake16", "automake17", "bison", "byacc", "cmake", "dev86", "djbfft",
- "docbook-utils-pdf", "doxygen", "flex", "gcc-g77", "gcc-gfortran", "gcc-gnat",
- "gcc-objc", "gcc32", "gcc34", "gcc34-c++", "gcc34-java", "gcc35", "gcc35-c++",
- "gcc4", "gcc4-c++", "gcc4-gfortran", "gettext", "glade", "glade2", "imake",
- "intltool", "kernel-source", "kernel-sourcecode", "libtool", "m4", "nasm",
- "perl-Module-Build", "pkgconfig", "qt-designer", "scons", "swig", "texinfo",
- "yasm",
- )
+def_devpkgs = \
+    ("autoconf", "autoconf213", "automake", "automake14", "automake15",
+     "automake16", "automake17", "bison", "byacc", "cmake", "dev86", "djbfft",
+     "docbook-utils-pdf", "doxygen", "flex", "gcc-g77", "gcc-gfortran",
+     "gcc-gnat", "gcc-objc", "gcc32", "gcc34", "gcc34-c++", "gcc34-java",
+     "gcc35", "gcc35-c++", "gcc4", "gcc4-c++", "gcc4-gfortran", "gettext",
+     "glade", "glade2", "imake", "intltool", "kernel-source",
+     "kernel-sourcecode", "libtool", "m4", "nasm", "perl-Module-Build",
+     "pkgconfig", "qt-designer", "scons", "swig", "texinfo", "yasm",
+     )
 
-def_nondevpkgs =\
-("glibc-devel", "libstdc++-devel", "vamp-plugin-sdk",
- )
+def_nondevpkgs = \
+    ("glibc-devel", "libstdc++-devel", "vamp-plugin-sdk",
+     )
 
 
 devpkgs = ()
@@ -76,20 +76,26 @@ def isDevelPkg(hdr):
     Decides whether a package is a devel one, based on name, configuration
     and contents.
     """
-    if not hdr: return 0
+    if not hdr:
+        return False
     name = hdr[rpm.RPMTAG_NAME]
-    if not name: return 0
+    if not name:
+        return False
     name = hdr.format("%{NAME}")
     na = hdr.format("%{NAME}.%{ARCH}")
     # Check nondevpkgs first (exclusion overrides inclusion)
-    if name in nondevpkgs or na in nondevpkgs: return 0
-    if name in devpkgs or na in devpkgs: return 1
-    if name in def_nondevpkgs or na in def_nondevpkgs: return 0
-    if name in def_devpkgs or na in def_devpkgs: return 1
-    if jdev_re.search(name): return 0
-    if dev_re.search(name): return 1
-    if test_re.search(name): return 1
-    if comp_re.search(name): return 1
+    if name in nondevpkgs or na in nondevpkgs:
+        return False
+    if name in devpkgs or na in devpkgs:
+        return True
+    if name in def_nondevpkgs or na in def_nondevpkgs:
+        return False
+    if name in def_devpkgs or na in def_devpkgs:
+        return True
+    if jdev_re.search(name):
+        return False
+    if dev_re.search(name) or test_re.search(name) or comp_re.search(name):
+        return True
     if lib_re1.search(name) or lib_re2.search(name):
         # Heuristics for lib*, *-lib and *-libs packages (kludgy...)
         a_found = so_found = 0
@@ -182,7 +188,7 @@ def main():
         version()
 
     ts = rpm.TransactionSet("/")
-    ts.setVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
+    ts.setVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
     mi = ts.dbMatch()
     hdrs = []
     for hdr in mi:
@@ -193,8 +199,8 @@ def main():
 
     try:
         if len(hdrs) > 0:
-            hdrs.sort(key =
-                      lambda x: (x[rpm.RPMTAG_NAME], x, x[rpm.RPMTAG_ARCH]))
+            hdrs.sort(
+                key=lambda x: (x[rpm.RPMTAG_NAME], x, x[rpm.RPMTAG_ARCH]))
             indent = ""
             if not opts.listonly:
                 indent = "  "
@@ -209,7 +215,7 @@ def main():
                 if unresolved:
                     print ("...whose removal would cause unresolved "
                            "dependencies:")
-                    unresolved.sort(key = lambda x: x[0][0])
+                    unresolved.sort(key=lambda x: x[0][0])
                     for t in unresolved:
                         dep = t[1][0]
                         if t[1][1]:
@@ -253,7 +259,7 @@ def main():
 
 
 for conf in ("__SYSCONFDIR__/rpmdevtools/rmdevelrpms.conf",
-             os.path.join(os.environ["HOME"], ".rmdevelrpmsrc"), # deprecated
+             os.path.join(os.environ["HOME"], ".rmdevelrpmsrc"),  # deprecated
              os.path.join(os.environ["HOME"],
                           ".config/rpmdevtools/rmdevelrpms.conf")):
     try:
