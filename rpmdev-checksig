@@ -40,13 +40,14 @@ import rpm
 
 def lookupKeyID(ts, keyid):
     """looks up a key id - returns the header"""
-    mi = ts.dbMatch('name','gpg-pubkey')
+    mi = ts.dbMatch('name', 'gpg-pubkey')
     mi.pattern('version', rpm.RPMMIRE_STRCMP, keyid)
     for hdr in mi:
         sum = hdr['summary']
         mo = re.search('\<.*\>', sum)
         email = mo.group()
         return email
+
 
 def checkSig(ts, package):
     """take a package, check its sigs, return 0 if they are all fine, return
@@ -63,7 +64,8 @@ def checkSig(ts, package):
         ts.hdrFromFdno(fdno)
     except rpm.error:
         e = sys.exc_info()[1]
-        if str(e) in ("public key not available", "public key not availaiable"):
+        if str(e) in ("public key not available",
+                      "public key not availaiable"):
             error = 103
         elif str(e) == "public key not trusted":
             error = 104
@@ -80,6 +82,7 @@ def checkSig(ts, package):
     os.close(fdno)
     return 0
 
+
 def returnHdr(ts, package):
     """hand back the hdr - duh - if the pkg is foobar handback None"""
     try:
@@ -87,7 +90,7 @@ def returnHdr(ts, package):
     except OSError:
         hdr = None
         return hdr
-    ts.setVSFlags(~(rpm.RPMVSF_NOMD5|rpm.RPMVSF_NEEDPAYLOAD))
+    ts.setVSFlags(~(rpm.RPMVSF_NOMD5 | rpm.RPMVSF_NEEDPAYLOAD))
     try:
         hdr = ts.hdrFromFdno(fdno)
     except rpm.error:
@@ -101,22 +104,24 @@ def returnHdr(ts, package):
 
 def getSigInfo(hdr):
     """hand back signature information and an error code"""
-    string = '%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
+    string = '%|DSAHEADER?{%{DSAHEADER:pgpsig}}:'\
+             '{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:'\
+             '{%|SIGGPG?{%{SIGGPG:pgpsig}}:'\
+             '{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
     siginfo = hdr.sprintf(string)
     if siginfo != '(none)':
-        error = 0 
+        error = 0
         sigtype, sigdate, sigid = siginfo.split(',')
     else:
         error = 101
         sigtype = 'MD5'
         sigdate = 'None'
         sigid = 'None'
-        
+
     infotuple = (sigtype, sigdate, sigid)
     return error, infotuple
-    
-    
-    
+
+
 def main(args):
     finalexit = 0
     ts = rpm.TransactionSet()
@@ -126,7 +131,7 @@ def main(args):
         ts.setVSFlags(0)
         error = checkSig(ts, package)
         hdr = returnHdr(ts, package)
-        if hdr == None:
+        if hdr is None:
             error = 100
             print ('%s: FAILED - None <None>' % package)
         else:
@@ -140,7 +145,7 @@ def main(args):
             if error != 0:
                 if error == 103:
                     print ('%s: MISSING KEY - %s' % (package, keyid))
-                else:                
+                else:
                     print ('%s: FAILED - %s %s' % (package, keyid, email))
             else:
                 print ('%s: %s - %s - %s' % (package, sigtype, keyid, email))
@@ -149,11 +154,10 @@ def main(args):
             error = sigerror
         if error > finalexit:
             finalexit = error
-            
+
         del hdr
     sys.exit(finalexit)
 
 
 if __name__ == '__main__':
     main(sys.argv[1:])
-

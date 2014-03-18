@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -tt
 # -*- coding: utf-8 -*-
 #
 # rpmdev-vercmp -- compare rpm versions
@@ -39,9 +39,11 @@ Exit status is 0 if the EVR's are equal, 11 if EVR1 is newer, and 12 if EVR2
 is newer.  Other exit statuses indicate problems.
 """)
 
+
 def askforstuff(thingname):
     thing = input('%8s: ' % thingname)
     return thing
+
 
 # from yum and rpmlint, with less internal assumptions, and returning
 # empty strings instead of None for missing bits
@@ -63,6 +65,7 @@ def stringToEVR(verstring):
         release = verstring[j+1:]
     return (epoch, version, release)
 
+
 def main():
     if len(sys.argv) > 1 and \
             sys.argv[1] in ('-h', '--help', '-help', '--usage'):
@@ -74,7 +77,7 @@ def main():
     elif len(sys.argv) < 7:
         e1 = askforstuff('Epoch1')
         v1 = askforstuff('Version1')
-        r1 = askforstuff('Release1')        
+        r1 = askforstuff('Release1')
         e2 = askforstuff('Epoch2')
         v2 = askforstuff('Version2')
         r2 = askforstuff('Release2')
@@ -83,7 +86,7 @@ def main():
 
     evr1 = '%s%s%s' % (e1 and e1 + ':' or '', v1 or '', r1 and '-' + r1 or '')
     evr2 = '%s%s%s' % (e2 and e2 + ':' or '', v2 or '', r2 and '-' + r2 or '')
-    
+
     rc = rpm.labelCompare((e1 or None, v1 or None, r1 or None),
                           (e2 or None, v2 or None, r2 or None))
     fmt = '%s == %s'

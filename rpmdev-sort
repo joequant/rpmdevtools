@@ -40,6 +40,7 @@ Supported formats:
 
 EPOCH_RE = re.compile(r"^(\d+):")
 
+
 def parse_nevr(s):
     ss = s.split('-')
     while (len(ss) < 3):
@@ -49,16 +50,17 @@ def parse_nevr(s):
     e = ""
 
     m = EPOCH_RE.search(v)
-    if m: # N-E:V-R
+    if m:  # N-E:V-R
         e = m.group(1)
         v = v[len(m.group(0)):]
     else:
         m = EPOCH_RE.search(ss[0])
-        if m: # E:N-V-R
+        if m:  # E:N-V-R
             e = m.group(1)
             ss[0] = ss[0][len(m.group(0)):]
 
     return ("-".join(ss), e, v, r)
+
 
 class NevrLine:
     line = None
@@ -84,6 +86,7 @@ class NevrLine:
 
     def __repr__(self):
         return self.line
+
 
 def main():
     if len(sys.argv) > 1 and \
