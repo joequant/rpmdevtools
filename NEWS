@@ -7,6 +7,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Sync with qa-robot upstream 0.3.6-alt1 (#1004450).
   - Exclude .git and .svn from -bumpspec completions by default (#22).
   - Make -rmdevelrpms work with Python 3; Python >= 2.6 is now required.
+  - Avoid duplicate argument completions (#22).
 
   Michael Schwendt:
   - Avoid some superfluous bumps in -bumpspec (#789330).
