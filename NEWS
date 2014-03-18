@@ -11,6 +11,7 @@ rpmdevtools x.x (201x-xx-xx)
 
   Michael Schwendt:
   - Avoid some superfluous bumps in -bumpspec (#789330).
+  - Add --new option to -bumpspec (#14).
 
 rpmdevtools 8.4 (2013-10-07)
 
