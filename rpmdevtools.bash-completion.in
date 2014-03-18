@@ -63,7 +63,7 @@ _spectool()
 
     local i
     for i in ${COMP_WORDS[@]} ; do
-        [[ "$i" == -@(h|-help) ]] && return 0
+        [[ "$i" == -@(h|-help) ]] && return
     done
 
     local cur prev ; _rpmdev_curprev "$2" "$3"
@@ -71,11 +71,11 @@ _spectool()
     case $prev in
         -C|--directory)
             _filedir -d
-            return 0
+            return
             ;;
         -s|--source|-p|--patch|-d|--define)
             # TODO: do better with these
-            return 0
+            return
             ;;
     esac
 
@@ -98,12 +98,12 @@ _rpmdev_bumpspec()
 
     local i
     for i in ${COMP_WORDS[@]} ; do
-        [[ "$i" == -@(h|-help|v|-version) ]] && return 0
+        [[ "$i" == -@(h|-help|v|-version) ]] && return
     done
 
     local cur prev ; _rpmdev_curprev "$2" "$3"
 
-    [[ $prev == -@(c|-comment|u|-userstring) ]] && return 0
+    [[ $prev == -@(c|-comment|u|-userstring) ]] && return
 
     if [[ "$cur" == -* ]] ; then
         COMPREPLY=( $( compgen -W '--help --comment --userstring --rightmost
@@ -126,12 +126,12 @@ _rpmdev_rmdevelrpms()
 
     local i
     for i in ${COMP_WORDS[@]} ; do
-        [[ "$i" == -@(h|-help|v|-version) ]] && return 0
+        [[ "$i" == -@(h|-help|v|-version) ]] && return
     done
 
     local cur prev ; _rpmdev_curprev "$2" "$3"
 
-    [[ $prev == --@(qf|queryformat) ]] && return 0
+    [[ $prev == --@(qf|queryformat) ]] && return
 
     COMPREPLY=( $( compgen -W '--help --list-only --queryformat --yes
                                --version' -- "$cur" ) )
@@ -158,7 +158,7 @@ _rpmls()
     if [[ "$cur" == -* ]] ; then
         COMPREPLY=( $( compgen -W '-l' -- "$cur" ) )
         _rpmdev_uniqargs
-        return 0
+        return
     fi
 
     [[ $cur != */* ]] && _rpmdev_installed_packages
@@ -172,7 +172,7 @@ _rpmdev_newspec()
 
     local i
     for i in ${COMP_WORDS[@]} ; do
-        [[ "$i" == -@(h|-help|v|-version) ]] && return 0
+        [[ "$i" == -@(h|-help|v|-version) ]] && return
     done
 
     local cur prev ; _rpmdev_curprev "$2" "$3"
@@ -180,19 +180,19 @@ _rpmdev_newspec()
     case $prev in
         -o|--output)
             _filedir spec
-            return 0
+            return
             ;;
         -t|--type)
             COMPREPLY=( $( command ls __SYSCONFDIR__/rpmdevtools/spectemplate-*.spec 2>/dev/null ) )
             COMPREPLY=( ${COMPREPLY[@]%.spec} )
             COMPREPLY=( ${COMPREPLY[@]#__SYSCONFDIR__/rpmdevtools/spectemplate-} )
             COMPREPLY=( $( compgen -W '${COMPREPLY[@]}' -- "$cur" ) )
-            return 0
+            return
             ;;
         -r|--rpm-version)
             # 4.3: no constructs filtered
             COMPREPLY=( $( compgen -W '4.3 4.4 4.6 4.8' -- "$cur" ) )
-            return 0
+            return
             ;;
     esac
 
@@ -212,7 +212,7 @@ _rpminfo()
 
     local i
     for i in ${COMP_WORDS[@]} ; do
-        [[ "$i" == -@(h|-help) ]] && return 0
+        [[ "$i" == -@(h|-help) ]] && return
     done
 
     local cur prev ; _rpmdev_curprev "$2" "$3"
@@ -220,11 +220,11 @@ _rpminfo()
     case $prev in
         -o|--output)
             _filedir
-            return 0
+            return
             ;;
         -T|--tmp-dir)
             _filedir -d
-            return 0
+            return
             ;;
     esac
 
@@ -234,7 +234,7 @@ _rpminfo()
                                    --pie --no_pie --rpath --rpath_odd --split
                                    --test --output --tmp-dir' -- "$cur" ) )
         _rpmdev_uniqargs
-        return 0
+        return
     fi
 
     [[ $cur != */* ]] && _rpmdev_installed_packages
@@ -248,20 +248,20 @@ _rpmdev_extract()
 
     local i
     for i in ${COMP_WORDS[@]} ; do
-        [[ "$i" == -@(h|v) ]] && return 0
+        [[ "$i" == -@(h|v) ]] && return
     done
 
     local cur prev ; _rpmdev_curprev "$2" "$3"
 
     if [[ $prev == -C ]] ; then
         _filedir -d
-        return 0
+        return
     fi
 
     if [[ "$cur" == -* ]] ; then
         COMPREPLY=( $( compgen -W '-q -f -C -h -v' -- "$cur" ) )
         _rpmdev_uniqargs
-        return 0
+        return
     fi
 
     _rpmdev_archives
@@ -274,7 +274,7 @@ _rpmdev_diff()
 
     local i
     for i in ${COMP_WORDS[@]} ; do
-        [[ "$i" == -@(h|-help|v|-version) ]] && return 0
+        [[ "$i" == -@(h|-help|v|-version) ]] && return
     done
 
     local cur prev ; _rpmdev_curprev "$2" "$3"
@@ -284,7 +284,7 @@ _rpmdev_diff()
         COMPREPLY=( $( compgen -W '--contents --list --long-list --metadata
             --help --version' -- "$cur" ) )
         _rpmdev_uniqargs
-        return 0
+        return
     fi
 
     _rpmdev_archives
@@ -297,7 +297,7 @@ _rpmdev_vercmp()
 
     local i
     for i in ${COMP_WORDS[@]} ; do
-        [[ "$i" == -@(h|-help|u|-usage) ]] && return 0
+        [[ "$i" == -@(h|-help|u|-usage) ]] && return
     done
 
     local cur prev ; _rpmdev_curprev "$2" "$3"
