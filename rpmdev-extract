@@ -84,7 +84,8 @@ fmime()
         application/x-zip|application/zip)                  ftype=zip  ;;
         application/x-tar*)                                 ftype=tar  ;;
         application/x-rpm)                                  ftype=rpm  ;;
-        application/x-archive|application/x-debian-package) ftype=ar   ;;
+        application/x-archive|application/x-debian-package|\
+        application/vnd.debian.binary-package)              ftype=ar   ;;
         application/x-arj)                                  ftype=arj  ;;
         application/x-zoo)                                  ftype=zoo  ;;
         application/x-lha*)                                 ftype=lha  ;;
