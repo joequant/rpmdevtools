@@ -81,7 +81,8 @@ _cmd()
 fmime()
 {
     case ${1%%;*} in
-        application/x-zip|application/zip)                  ftype=zip  ;;
+        application/x-zip|application/zip|\
+        application/java-archive)                           ftype=zip  ;;
         application/x-tar*)                                 ftype=tar  ;;
         application/x-rpm)                                  ftype=rpm  ;;
         application/x-archive|application/x-debian-package|\
@@ -125,7 +126,7 @@ ftype()
     t=$(file -zbL "$1" 2>/dev/null)
     case $t in
         *7-zip\ archive*)                                   ftype=7z   ;;
-        *Z[iI][pP]\ *archive*)                              ftype=zip  ;;
+        *Z[iI][pP]\ *archive*|*Java\ *archive*)             ftype=zip  ;;
         *tar\ archive*)                                     ftype=tar  ;;
         *ar\ archive*|*Debian\ *package*)                   ftype=ar   ;;
         *ARJ\ *archive*)                                    ftype=arj  ;;
