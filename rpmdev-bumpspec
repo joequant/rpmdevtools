@@ -117,7 +117,7 @@ class SpecFile:
 
     def newVersion(self, vr):
         rpos = vr.find('-')
-        if rpos>=0:  # set custom Release value
+        if rpos >= 0:  # set custom Release value
             r = vr[rpos+1:]
             v = vr[:rpos]
         else:
@@ -125,7 +125,8 @@ class SpecFile:
             v = vr
         for i in range(len(self.lines)):
             if self.lines[i].lower().startswith('version:'):
-                self.lines[i] = re.sub(r'[^: \t]*$', v, self.lines[i].rstrip()) + '\n'
+                self.lines[i] = re.sub(
+                    r'[^: \t]*$', v, self.lines[i].rstrip()) + '\n'
             if self.lines[i].lower().startswith('release:'):
                 self.lines[i] = 'Release: ' + r + '\n'
 
@@ -263,7 +264,8 @@ the Free Software Foundation; either version 2 of the License, or
                       help="bump trailing .STRING<DIGIT> component if found, "
                       "append .STRING1 if not; trumps -r")
     parser.add_option("-n", "--new",
-                      help="set new version and reset/set release (simple spec files only)")
+                      help="set new version and reset/set release "
+                      "(simple spec files only)")
     parser.add_option("-V", "--verbose", default=False, action='store_true',
                       help="more output")
     parser.add_option("-v", "--version", default=False, action='store_true',
@@ -280,8 +282,8 @@ the Free Software Foundation; either version 2 of the License, or
     if not opts.userstring:
         parser.error('Userstring required, see option -u')
 
-    if not opts.comment: 
-        opts.comment = '- new version' if opts.new else '- rebuilt' 
+    if not opts.comment:
+        opts.comment = '- new version' if opts.new else '- rebuilt'
 
     # Grab bullet, insert one if not found.
     bullet_re = re.compile(r'^([^\s\w])\s', re.UNICODE)
@@ -311,10 +313,10 @@ the Free Software Foundation; either version 2 of the License, or
         except:
             # Not actually a parser error, but... meh.
             parser.error(sys.exc_info()[1])
-        if opts.new: 
-            s.newVersion(opts.new) 
-        else: 
-            s.bumpRelease() 
+        if opts.new:
+            s.newVersion(opts.new)
+        else:
+            s.bumpRelease()
         s.writeFile(aspec)
 
         # Get EVR for changelog entry.
