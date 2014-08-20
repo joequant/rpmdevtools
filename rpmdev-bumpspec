@@ -249,6 +249,8 @@ the Free Software Foundation; either version 2 of the License, or
 
     userstring = subprocess.Popen("rpmdev-packager 2>/dev/null", shell=True,
                                   stdout=subprocess.PIPE).communicate()[0]
+    if sys.version_info[0] > 2:
+        userstring = userstring.decode(errors='replace')
     userstring = userstring.strip() or None
 
     parser = OptionParser(usage=usage)
@@ -323,7 +325,9 @@ the Free Software Foundation; either version 2 of the License, or
         cmd = ("rpm", "-q", "--specfile", "--define", "dist %{nil}",
                "--qf=%|epoch?{%{epoch}:}:{}|%{version}-%{release}\n", aspec)
         popen = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-        evr = str(popen.communicate()[0]).split("\n")[0]
+        evr = popen.communicate()[0].split(b"\n")[0]
+        if sys.version_info[0] > 2:
+            evr = evr.decode(errors='replace')
 
         s.addChangelogEntry(evr, opts.comment, opts.userstring)
         s.writeFile(aspec)
