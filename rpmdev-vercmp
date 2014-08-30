@@ -71,18 +71,21 @@ def main():
             sys.argv[1] in ('-h', '--help', '-help', '--usage'):
         usage()
         sys.exit(0)
-    elif len(sys.argv) == 3:
-        (e1, v1, r1) = stringToEVR(sys.argv[1])
-        (e2, v2, r2) = stringToEVR(sys.argv[2])
-    elif len(sys.argv) < 7:
+    elif len(sys.argv) == 1:
         e1 = askforstuff('Epoch1')
         v1 = askforstuff('Version1')
         r1 = askforstuff('Release1')
         e2 = askforstuff('Epoch2')
         v2 = askforstuff('Version2')
         r2 = askforstuff('Release2')
-    else:
+    elif len(sys.argv) == 3:
+        (e1, v1, r1) = stringToEVR(sys.argv[1])
+        (e2, v2, r2) = stringToEVR(sys.argv[2])
+    elif len(sys.argv) == 7:
         (e1, v1, r1, e2, v2, r2) = sys.argv[1:]
+    else:
+        usage()
+        sys.exit(1)
 
     evr1 = '%s%s%s' % (e1 and e1 + ':' or '', v1 or '', r1 and '-' + r1 or '')
     evr2 = '%s%s%s' % (e2 and e2 + ':' or '', v2 or '', r2 and '-' + r2 or '')

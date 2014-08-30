@@ -11,6 +11,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Recognize .deb archives in -extract per their new IANA MIME type.
   - Update file strings for recognizing jar and friends in -extract.
   - Fix -bumpspec encoding issues with Python 3 (#23).
+  - Explicitly error out on invalid number of args to -vercmp.
 
   Michael Schwendt:
   - Avoid some superfluous bumps in -bumpspec (#789330).
