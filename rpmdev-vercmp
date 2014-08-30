@@ -63,6 +63,14 @@ def stringToEVR(verstring):
     else:
         version = verstring[i:j]
         release = verstring[j+1:]
+    warned = False
+    for tag in 'epoch', 'version', 'release':
+        value = eval(tag)
+        if '-' in value:
+            sys.stderr.write('WARNING: hyphen in %s %s\n' % (tag, value))
+            warned = True
+    if warned:
+        usage()
     return (epoch, version, release)
 
 

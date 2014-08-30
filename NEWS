@@ -12,6 +12,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Update file strings for recognizing jar and friends in -extract.
   - Fix -bumpspec encoding issues with Python 3 (#23).
   - Explicitly error out on invalid number of args to -vercmp.
+  - Make -vercmp warn if parsed epoch, version, or release contains a hyphen.
 
   Michael Schwendt:
   - Avoid some superfluous bumps in -bumpspec (#789330).
