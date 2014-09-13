@@ -103,6 +103,8 @@ fmime()
             decomp="lrzip -dqo-" ;;
         application/x-lz4)
             decomp="lz4 -dc" ;;
+        application/zlib)
+            decomp="pigz -dc" ;;
         application/x-qpress)
             decomp="qpress -do" ;;
     esac
@@ -153,6 +155,8 @@ ftype()
                 *.lrz)                decomp="lrzip -dqo-" ;;
                 # lz4 support added in file 5.17
                 *.lz4)                decomp="lz4 -dc" ;;
+                # zlib support added in file > 5.19 (?)
+                *.zz)                 decomp="pigz -dc" ;;
                 # qpress support added in file > 5.19 (?)
                 *.qp)                 decomp="qpress -do" ;;
             esac
