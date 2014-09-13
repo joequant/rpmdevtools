@@ -3,7 +3,7 @@ rpmdevtools x.x (201x-xx-xx)
   Ville Skyttä:
   - Install default curlrc, add --insecure to it.
   - Support case insensitive Release tag in -bumpspec fallback.
-  - Add LZ4 support to -extract.
+  - Add LZ4 and qpress support to -extract.
   - Sync with qa-robot upstream 0.3.6-alt1 (#1004450).
   - Exclude .git and .svn from -bumpspec completions by default (#22).
   - Make -rmdevelrpms work with Python 3; Python >= 2.6 is now required.
