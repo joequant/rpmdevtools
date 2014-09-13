@@ -147,9 +147,9 @@ ftype()
                 *.@(xz|txz|lzma|tlz)) decomp="xz -dc" ;;
                 # lzip support added in file 5.00
                 *.lz)                 decomp="lzip -dc" ;;
-                # lrzip support added in file > 5.05
+                # lrzip support added in file 5.06
                 *.lrz)                decomp="lrzip -dqo-" ;;
-                # lz4 support added in file > 5.16 (?)
+                # lz4 support added in file 5.17
                 *.lz4)                decomp="lz4 -dc" ;;
             esac
         fi
