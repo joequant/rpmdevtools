@@ -128,7 +128,8 @@ class SpecFile:
                 self.lines[i] = re.sub(
                     r'[^: \t]*$', v, self.lines[i].rstrip()) + '\n'
             if self.lines[i].lower().startswith('release:'):
-                self.lines[i] = 'Release: ' + r + '\n'
+                self.lines[i] = re.sub(
+                    r'[^: \t]*$', r, self.lines[i].rstrip()) + '\n'
 
     _changelog_pattern = re.compile(r"^%changelog(\s|$)", re.I)
 
