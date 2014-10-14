@@ -127,7 +127,7 @@ class SpecFile:
             if self.lines[i].lower().startswith('version:'):
                 self.lines[i] = re.sub(
                     r'[^: \t]*$', v, self.lines[i].rstrip()) + '\n'
-            if self.lines[i].lower().startswith('release:'):
+            elif self.lines[i].lower().startswith('release:'):
                 self.lines[i] = re.sub(
                     r'[^: \t]*$', r, self.lines[i].rstrip()) + '\n'
 
