@@ -1,4 +1,4 @@
-rpmdevtools x.x (201x-xx-xx)
+rpmdevtools 8.5 (2014-10-20)
 
   Ville Skyttä:
   - Install default curlrc, add --insecure to it.
