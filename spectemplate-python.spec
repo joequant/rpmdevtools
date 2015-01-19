@@ -1,6 +1,11 @@
 # sitelib for noarch packages, sitearch for others (remove the unneeded one)
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+%{!?__python2: %global __python2 %__python}
+%{!?python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
+
+%if 0%{?fedora}
+%global with_python3 1
+%endif
 
 Name:           
 Version:        
@@ -14,25 +19,55 @@ Source0:
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      
-BuildRequires:  python-devel
+BuildRequires:  python2-devel
+%if 0%{?with_python3}
+BuildRequires:  python3-devel
+%endif
 
 %description
+
+
+%if 0%{?with_python3}
+%package -n
+Summary:        
+Group:          Development/Languages
+
+%description -n
+%endif
 
 
 %prep
 %setup -q
 
+%if 0%{?with_python3}
+rm -rf %{py3dir}
+cp -a . %{py3dir}
+%endif # with_python3
 
 %build
 # Remove CFLAGS=... for noarch packages (unneeded)
-CFLAGS="$RPM_OPT_FLAGS" %{__python} setup.py build
+CFLAGS="$RPM_OPT_FLAGS" %{__python2} setup.py build
 
+%if 0%{?with_python3}
+pushd %{py3dir}
+CFLAGS="$RPM_OPT_FLAGS" %{__python3} setup.py build
+popd
+%endif # with_python3
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+# Must do the python3 install first because the scripts in /usr/bin are
+# overwritten with every setup.py install (and we want the python2 version
+# to be the default for now).
+%if 0%{?with_python3}
+pushd %{py3dir}
+%{__python3} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+popd
+%endif # with_python3
 
- 
+%{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -40,9 +75,17 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %doc
 # For noarch packages: sitelib
-%{python_sitelib}/*
+%{python2_sitelib}/*
 # For arch-specific packages: sitearch
-%{python_sitearch}/*
+%{python2_sitearch}/*
+
+%if 0%{?with_python3}
+%doc
+# For noarch packages: sitelib
+%{python3_sitelib}/*
+# For arch-specific packages: sitearch
+%{python3_sitearch}/*
+%endif
 
 
 %changelog

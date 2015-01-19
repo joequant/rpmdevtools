@@ -5,6 +5,9 @@ rpmdevtools x.x (201x-xx-xx)
   - Fall back to username in -packager (#29)
   - Do not define %_smp_mflags in -setuptree (#1198009)
 
+  Slavek Kabrda:
+  - Python spec template improvements (#28)
+
 rpmdevtools 8.5 (2014-10-20)
 
   Ville Skyttä:
