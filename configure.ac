@@ -14,6 +14,11 @@ if test -z "$POD2MAN" ; then
     AC_MSG_ERROR([pod2man is required])
 fi
 
+PKG_CHECK_VAR([bashcompdir], [bash-completion], [completionsdir],
+    [HAVE_BASHCOMP2=1], [bashcompdir="${sysconfdir}/bash_completion.d"])
+AM_CONDITIONAL([HAVE_BASHCOMP2], [test "$HAVE_BASHCOMP2" = 1])
+AC_SUBST(bashcompdir)
+
 AC_OUTPUT(
 Makefile
 emacs/Makefile

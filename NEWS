@@ -1,3 +1,8 @@
+rpmdevtools x.x (201x-xx-xx)
+
+  Ville Skyttä:
+  - Update bash completion setup for modern bash-completion
+
 rpmdevtools 8.5 (2014-10-20)
 
   Ville Skyttä:

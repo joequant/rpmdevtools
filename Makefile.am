@@ -1,7 +1,7 @@
 SUBDIRS = emacs qa-robot
 
 pkgsysconfdir = $(sysconfdir)/rpmdevtools
-bashcompdir = $(sysconfdir)/bash_completion.d
+bashcompdir = @bashcompdir@
 
 bin_SCRIPTS = rpmdev-newinit rpmdev-newspec rpmdev-rmdevelrpms spectool
 dist_bin_SCRIPTS = rpmdev-checksig rpmdev-diff rpmdev-extract rpmdev-md5 \
@@ -51,6 +51,19 @@ install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
 	for sum in $(sums) ; do ln rpmdev-md5 rpmdev-$$sum ; done
 
+if HAVE_BASHCOMP2
+install-data-hook:
+	mv $(DESTDIR)$(bashcompdir)/rpmdevtools.bash-completion \
+		$(DESTDIR)$(bashcompdir)/rpmdev-bumpspec ; \
+	for f in rpmdev-{checksig,cksum,diff,extract,md5,newspec,rmdevelrpms,setuptree,sha{1,224,256,384,512},sum,vercmp} rpminfo rpmls spectool ; do \
+		ln -s rpmdev-bumpspec $(DESTDIR)$(bashcompdir)/$$f ; \
+	done
+endif
+
 uninstall-hook:
 	cd $(DESTDIR)$(bindir) && \
 	for sum in $(sums) ; do $(RM) rpmdev-$$sum ; done
+if HAVE_BASHCOMP2
+	cd $(DESTDIR)$(bashcompdir) && \
+	$(RM) rpmdev-{bumpspec,checksig,cksum,diff,extract,md5,newspec,rmdevelrpms,setuptree,sha{1,224,256,384,512},sum,vercmp} rpminfo rpmls spectool
+endif
