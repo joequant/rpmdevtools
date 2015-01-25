@@ -2,7 +2,7 @@
 
 # rpmdev-packager -- guess rpm packager info from various sources
 #
-# Copyright (c) 2009 Ville Skyttä <ville.skytta@iki.fi>
+# Copyright (c) 2009-2015 Ville Skyttä <ville.skytta@iki.fi>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
 version()
 {
     cat <<EOF
-rpmdev-packager version 1.1
+rpmdev-packager version 1.2
 
-Copyright (c) 2009 Ville Skyttä <ville.skytta@iki.fi>
+Copyright (c) 2009-2015 Ville Skyttä <ville.skytta@iki.fi>
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -38,9 +38,9 @@ rpmdev-packager guesses rpm packager info from various sources:
 
   $RPM_PACKAGER   from environment (full name + email address)
   %packager       from rpm configuration (full name + email address)
-  /etc/passwd     gecos (full name)
   certificates    ~/.fedora.cert (email address)
   $MAILTO         from environment (email address)
+  /etc/passwd     gecos (full name, username)
 
 EOF
     usage
@@ -76,7 +76,8 @@ while [ -n "$1" ] ; do
     esac
 done
 
-fullname="$( getent passwd $( id -un ) 2>/dev/null | cut -d: -f5 )"
+username="$( id -un )"
+fullname="$( getent passwd $username 2>/dev/null | cut -d: -f5 )"
 certs=(~/.fedora.cert)
 
 # Try $RPM_PACKAGER
@@ -104,8 +105,11 @@ if [ -z "$packager" ] ; then
     [ -n "$packager" -a -n "$fullname" ] && packager="$fullname <$packager>"
 fi
 
-# Fall back to full name only
+# Try full name
 [ -z "$packager" ] && packager="$fullname"
+
+# Fall back to username only
+[ -z "$packager" ] && packager="$username"
 
 # Done
 [ -n "$packager" ] && echo "$packager"
