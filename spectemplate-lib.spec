@@ -50,12 +50,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%defattr(-,root,root,-)
 %doc
 %{_libdir}/*.so.*
 
 %files devel
-%defattr(-,root,root,-)
 %doc
 %{_includedir}/*
 %{_libdir}/*.so

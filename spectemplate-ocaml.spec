@@ -63,7 +63,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%defattr(-,root,root,-)
 %doc LICENSE
 %dir %{_libdir}/ocaml/%{libname}/
 %if %opt
@@ -77,7 +76,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files devel
-%defattr(-,root,root,-)
 %doc LICENSE README
 %if %opt
 %{_libdir}/ocaml/*/*.a

@@ -45,7 +45,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%defattr(-,root,root,-)
 %doc
 # For noarch packages: ruby_sitelib
 %{ruby_sitelib}/*

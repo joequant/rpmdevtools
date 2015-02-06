@@ -50,7 +50,6 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%defattr(-,root,root,-)
 %dir %{rlibdir}/%{packname}
 %doc %{rlibdir}/%{packname}/doc
 %doc %{rlibdir}/%{packname}/html
