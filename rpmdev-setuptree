@@ -53,24 +53,6 @@ EOF
 #	echo "$MAKE  make" >> $RPMMACROS
 #	}
 #
-ISTOP=`grep -c ^%_smp_mflags $RPMMACROS`
-[ $ISTOP -lt 1 ] && {
-	cat <<\EOF >> $RPMMACROS
-
-%_smp_mflags %( \
-    [ -z "$RPM_BUILD_NCPUS" ] \\\
-        && RPM_BUILD_NCPUS="`/usr/bin/nproc 2>/dev/null || \\\
-                             /usr/bin/getconf _NPROCESSORS_ONLN`"; \\\
-    if [ "$RPM_BUILD_NCPUS" -gt 16 ]; then \\\
-        echo "-j16"; \\\
-    elif [ "$RPM_BUILD_NCPUS" -gt 3 ]; then \\\
-        echo "-j$RPM_BUILD_NCPUS"; \\\
-    else \\\
-        echo "-j3"; \\\
-    fi )
-EOF
-	}
-#
 ISTOP=`grep -c ^%__arch_install_post $RPMMACROS`
 [ $ISTOP -lt 1 ] && {
 	cat <<\EOF >> $RPMMACROS

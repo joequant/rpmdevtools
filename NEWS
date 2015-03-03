@@ -3,6 +3,7 @@ rpmdevtools x.x (201x-xx-xx)
   Ville Skyttä:
   - Update bash completion setup for modern bash-completion
   - Fall back to username in -packager (#29)
+  - Do not define %_smp_mflags in -setuptree (#1198009)
 
 rpmdevtools 8.5 (2014-10-20)
 
