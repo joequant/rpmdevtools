@@ -4,7 +4,9 @@
 %{!?python2_sitearch: %global python2_sitearch %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
 
 %if 0%{?fedora}
-%global with_python3 1
+%bcond_without python3
+%else
+%bcond_with python3
 %endif
 
 Name:           
@@ -20,50 +22,53 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      
 BuildRequires:  python2-devel
-%if 0%{?with_python3}
+%if %{with python3}
 BuildRequires:  python3-devel
-%endif
+%endif # with python3
 
 %description
 
 
-%if 0%{?with_python3}
-%package -n
+%if %{with python3}
+%package     -n 
 Summary:        
 Group:          Development/Languages
 
-%description -n
-%endif
+%description -n 
+
+%endif # with python3
 
 
 %prep
 %setup -q
 
-%if 0%{?with_python3}
+%if %{with python3}
 rm -rf %{py3dir}
 cp -a . %{py3dir}
-%endif # with_python3
+%endif # with python3
+
 
 %build
 # Remove CFLAGS=... for noarch packages (unneeded)
 CFLAGS="$RPM_OPT_FLAGS" %{__python2} setup.py build
 
-%if 0%{?with_python3}
+%if %{with python3}
 pushd %{py3dir}
 CFLAGS="$RPM_OPT_FLAGS" %{__python3} setup.py build
 popd
-%endif # with_python3
+%endif # with python3
+
 
 %install
 rm -rf $RPM_BUILD_ROOT
 # Must do the python3 install first because the scripts in /usr/bin are
 # overwritten with every setup.py install (and we want the python2 version
 # to be the default for now).
-%if 0%{?with_python3}
+%if %{with python3}
 pushd %{py3dir}
 %{__python3} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 popd
-%endif # with_python3
+%endif # with python3
 
 %{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
@@ -79,13 +84,14 @@ rm -rf $RPM_BUILD_ROOT
 # For arch-specific packages: sitearch
 %{python2_sitearch}/*
 
-%if 0%{?with_python3}
+%if %{with python3}
+%files -n 
 %doc
 # For noarch packages: sitelib
 %{python3_sitelib}/*
 # For arch-specific packages: sitearch
 %{python3_sitearch}/*
-%endif
+%endif # with python3
 
 
 %changelog
