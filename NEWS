@@ -6,6 +6,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Do not define %_smp_mflags in -setuptree (#1198009)
   - Print usage only once in -vercmp hyphen warning
   - Always check hyphens in -vercmp no matter where EVR comes from
+  - Python spec template improvements
 
   Slavek Kabrda:
   - Python spec template improvements (#28)

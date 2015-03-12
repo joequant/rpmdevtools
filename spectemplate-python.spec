@@ -40,20 +40,23 @@ Group:          Development/Languages
 
 
 %prep
-%setup -q
+%setup -qc
+mv %{name}-%{version} python2
 
 %if %{with python3}
-rm -rf %{py3dir}
-cp -a . %{py3dir}
+cp -a python2 python3
 %endif # with python3
 
 
 %build
+pushd python2
 # Remove CFLAGS=... for noarch packages (unneeded)
 CFLAGS="$RPM_OPT_FLAGS" %{__python2} setup.py build
+popd
 
 %if %{with python3}
-pushd %{py3dir}
+pushd python3
+# Remove CFLAGS=... for noarch packages (unneeded)
 CFLAGS="$RPM_OPT_FLAGS" %{__python3} setup.py build
 popd
 %endif # with python3
@@ -65,12 +68,26 @@ rm -rf $RPM_BUILD_ROOT
 # overwritten with every setup.py install (and we want the python2 version
 # to be the default for now).
 %if %{with python3}
-pushd %{py3dir}
+pushd python3
 %{__python3} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 popd
 %endif # with python3
 
+pushd python2
 %{__python2} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
+popd
+
+
+%check
+pushd python2
+%{__python2} setup.py test
+popd
+
+%if %{with python3}
+pushd python3
+%{__python2} setup.py test
+popd
+%endif
 
 
 %clean
