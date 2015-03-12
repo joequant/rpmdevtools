@@ -4,6 +4,8 @@ rpmdevtools x.x (201x-xx-xx)
   - Update bash completion setup for modern bash-completion
   - Fall back to username in -packager (#29)
   - Do not define %_smp_mflags in -setuptree (#1198009)
+  - Print usage only once in -vercmp hyphen warning
+  - Always check hyphens in -vercmp no matter where EVR comes from
 
   Slavek Kabrda:
   - Python spec template improvements (#28)
