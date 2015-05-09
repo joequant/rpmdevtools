@@ -7,6 +7,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Print usage only once in -vercmp hyphen warning
   - Always check hyphens in -vercmp no matter where EVR comes from
   - Python spec template improvements
+  - Avoid spectool warnings on invalid input (#1219917)
 
   Slavek Kabrda:
   - Python spec template improvements (#28)
