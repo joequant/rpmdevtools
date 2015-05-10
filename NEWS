@@ -8,6 +8,7 @@ rpmdevtools x.x (201x-xx-xx)
   - Always check hyphens in -vercmp no matter where EVR comes from
   - Python spec template improvements
   - Avoid spectool warnings on invalid input (#1219917)
+  - Drop %defattr from spec templates (#30)
 
   Slavek Kabrda:
   - Python spec template improvements (#28)
