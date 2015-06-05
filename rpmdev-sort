@@ -27,7 +27,7 @@ import rpm
 
 
 def usage():
-    print ("""
+    print("""
 rpmdev-sort # with no arguments, processes standard input
 
 Sort the package list given on standard input, one per line.
