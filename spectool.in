@@ -23,6 +23,7 @@
 use strict;
 use File::Temp;
 use File::Spec;
+use File::Basename;
 use FileHandle;
 use Getopt::Long;
 
@@ -49,6 +50,9 @@ my $protocols_re = '(?:' . join ('|', @protocols) . ')';
 my @defines;
 my %sources;
 my %patches;
+my %sources_get;
+my %patches_get;
+my %sources_root;
 my $specfile;
 my $specfile_fh;
 my $verbose = 0;
@@ -114,7 +118,7 @@ sub eval_sources_patches {
 		$line =~ s/^\s*Copyright\s*:/License:/i;
 		$line =~ s/^\s*Serial\s*:/Epoch:/i;
 		$preamble .= $line;
-		if ($line !~ m/^\s*(?:source|patch)\d*\s*:/) {
+		if ($line !~ m/^\s*(?:source|patch|#sourceget|#patchget|#sourceroot)\d*\s*:/) {
 			print $tmpspec_fh $line;
 		}
 		if ($line =~ /^\s*Group\s*:/i) {
@@ -143,10 +147,16 @@ sub eval_sources_patches {
 
 	while (<PIPE>) {
 		chomp ();
-		if (m/^\s*(source|patch)(\d*)\s*:\s*(.*\S)\s*$/i) {
+		if (m/^\s*(source|patch|#sourceget|#patchget|#sourceroot)(\d*)\s*:\s*(.*\S)\s*$/i) {
 			my $what = \%sources;
 			if (lc ($1) eq 'patch') {
-				$what = \%patches;
+			    $what = \%patches;
+			} elsif (lc ($1) eq '#sourceget') {
+			    $what = \%sources_get;
+			} elsif (lc ($1) eq '#patchget') {
+			    $what = \%patches_get;
+			} elsif (lc ($1) eq '#sourceroot') {
+			    $what = \%sources_root;
 			}
 			my $index = 0;
 			if ($2 ne '') {
@@ -157,7 +167,6 @@ sub eval_sources_patches {
 	}
 
 	close PIPE;
-
 	# handle $stderr_filename
 }
 
@@ -176,8 +185,25 @@ sub expand {
 				push @retval, "patch$_";
 			}
 		};
+		m/^sourcesget$/i && do {
+			foreach (sort (keys %sources_get)) {
+				push @retval, "#sourceget$_";
+			}
+		};
+		m/^patchesget$/i && do {
+			foreach (sort (keys %patches_get)) {
+				push @retval, "#patchget$_";
+			}
+		};
+		m/^sourcesroot$/i && do {
+			foreach (sort (keys %sources_root)) {
+				push @retval, "#sourceroot$_";
+			}
+		};
 		m/^all$/i && do {
-			@retval = (expand ('sources'), expand ('patches'));
+			@retval = (expand ('sources'), expand ('patches'),
+			    expand('sourcesget'), expand('patchesget'),
+			    expand('sourcesroot'));
 		};
 	}
 	return @retval;
@@ -187,8 +213,14 @@ sub list_sources_patches {
 	foreach (@_) {
 		m/^source(\d+)$/i && print "Source$1: " . $sources{$1} . "\n";
 		m/^patch(\d+)$/i && print "Patch$1: " . $patches{$1} . "\n";
+		m/^sourceget(\d+)$/i && print "SourceGet$1: " . $sources_get{$1} . "\n";
+		m/^patchget(\d+)$/i && print "PatchGet$1: " . $patches_get{$1} . "\n";
+		m/^sourceroot(\d+)$/i && print "SourceRoot$1: " . $sources_root{$1} . "\n";
 		m/^source$/i && print "Source0: " . $sources{0} . "\n";
 		m/^patch$/i && print "Patch0: " . $patches{0} . "\n";
+		m/^sourceget$/i && print "SourceGet0: " . $sources_get{0} . "\n";
+		m/^patchget$/i && print "PatchGet0: " . $patches_get{0} . "\n";
+		m/^sourceroot$/i && print "SourceRoot0: " . $sources_root{0} . "\n";
 		m/^(sources|patches|all)$/i && list_sources_patches (expand ($1));
 	}
 }
@@ -198,10 +230,9 @@ sub retrievable {
 	return eval "\$url =~ m,^$protocols_re://,i;";
 }
 
-sub retrieve {
-	my ($where, $url) = @_;
-	if (retrievable ($url)) {
-		my $path = File::Spec->catfile($where, $url =~ m|([^/]+)$|);
+
+sub retrieve_to_path {
+        my ($where, $url, $path) = @_;
 		print "Getting $url to $path\n";
 		if (-e $path) {
 			if ($force) {
@@ -228,8 +259,73 @@ sub retrieve {
 		} else {
 			print "dry run: @cmd\n";
 		}
+}
+
+sub retrieve {
+        my ($where, $url) = @_;
+	if (retrievable ($url)) {
+		my $path = File::Spec->catfile($where, $url =~ m|([^/]+)$|);
+		retrieve_to_path($where, $url, $path);
 	} else {
 		warn "Couldn't fetch $url: missing/unsupported URL\n" if ($verbose);
+	}
+	return 0;
+}
+
+sub get {
+	my ($where, $source, $target, $index) = @_;
+	my $path = File::Spec->catfile($where, 
+				       $target =~ m|([^/]+)$|);
+       $path = File::Spec->rel2abs($path);
+       my $path_notag = $path;
+       $path_notag =~ s/\.mga[1-9]+//g;
+	my ($my_source_root, $dummy,
+	     $suffix) = fileparse($path_notag, (".tar.gz", ".tar.bz2",
+	     ".gz", ".bz2", ".tar.xz", ".xz"));
+	if (defined($sources_root{$index})) {
+	    $my_source_root =  $sources_root{$index};
+	}
+
+
+	my $compress = "gzip";
+	if ($suffix =~ /\.xz$/) {
+	    $compress = "xz";
+	} elsif ($suffix =~ /\.bz2$/) {
+	    $compress= "bzip2";
+	}
+	my $tmp_source_dir = $tmpdir . "/" . $my_source_root;
+
+	if ($source =~ m,^git://,i || $source =~ m,\.git(\w|$),i) {
+
+	    $source = "git clone ". $source . 
+		" " . $tmp_source_dir . 
+		" ; cd " . $tmpdir . 
+		"; git archive --format=tar --prefix=" . 
+		$my_source_root . " " . $my_source_root . 
+		" | ". $compress . " > " . $path;
+	} elsif ($source =~ m,^svn://,i || $source =~ m/subversion/i) {
+	    my $revision_string = "";
+	    $source = "svn export " . $source . 
+		" " .$tmp_source_dir .
+		" ; cd " . $tmpdir .
+		" ; tar cf - " . $my_source_root . " | " . 
+		$compress ." > " . $path;
+	} elsif (retrievable ($source)) {
+	    return retrieve_to_path($where, $source, $path);
+	} else {
+            $source = fileparse($source);
+        }
+	print "running command: $source\n";
+	if (! $dryrun) {
+	    my $oldpath = $ENV{'PATH'};
+	    my $rpmsourcedir = `rpm --eval '\%{_sourcedir}'`;
+	    $ENV{'PATH'} = $where . "/../SOURCES:" . 
+		$rpmsourcedir . ":" . $ENV{'PATH'};
+	    system $source;
+	    $ENV{'PATH'} = $oldpath;
+	    return $? == -1 ? 127 : $? >> 8;
+	} else {
+	    print "dry run: $source\n";
 	}
 	return 0;
 }
@@ -239,12 +335,26 @@ sub retrieve_sources_patches {
 	my $ret = my $rc = 0;
 	foreach (@_) {
 		if (/^source(\d+)$/i) {
+		    if (!exists($sources_get{$1})) {
 			$rc = retrieve ($where, $sources{$1});
 			$ret ||= $rc;
+		    }
 		}
 		if (/^patch(\d+)$/i) {
+		    if (!exists($patches_get{$1})) {
 			$rc = retrieve ($where, $patches{$1});
 			$ret ||= $rc;
+		    }
+		}
+		if (/^#sourceget(\d+)$/i) {
+		        $rc = get($where, $sources_get{$1}, 
+				  $sources{$1}, $1);
+		        $ret ||= $rc;
+		}
+		if (/^#patchget(\d+)$/i) {
+		        $rc = get($where, $patches_get{$1}, 
+				  $patches{$1}, $1);
+		        $ret ||= $rc;
 		}
 		if (/^(sources|patches|all)$/i) {
 			$rc = retrieve_sources_patches ($where, expand ($1));
@@ -299,7 +409,7 @@ Miscellaneous:
  -D, --debug                 output debug info, don't clean up when done
 
 Files:
-__SYSCONFDIR__/rpmdevtools/curlrc
+/etc/rpmdevtools/curlrc
  optional curl(1) configuration
 EOF
 	exit $status;
@@ -324,6 +434,9 @@ sub open_specfile {
 my $command;
 my @sources;
 my @patches;
+my @sources_get;
+my @patches_get;
+my @sources_root;
 my @what;
 my $where = '.';
 my $cleanup = 1;
@@ -361,6 +474,22 @@ foreach (@sources) {
 foreach (@patches) {
 	push @what, "patch$_";
 }
+
+@sources_get = split (/,/, join (',', @sources_get));
+foreach (@sources_get) {
+	push @what, "#sourceget$_";
+}
+
+@patches_get = split (/,/, join (',', @patches_get));
+foreach (@patches_get) {
+	push @what, "#patchget$_";
+}
+
+@sources_root = split (/,/, join (',', @sources_root));
+foreach (@sources_root) {
+	push @what, "#sourceroot$_";
+}
+
 
 @what = ('all') unless @what;
 $command = 'listfiles' unless $command;
